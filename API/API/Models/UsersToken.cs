@@ -9,5 +9,5 @@ public class UsersToken
     public string AccessToken { get; set; } = string.Empty;
     public string RefreshToken { get; set; } = string.Empty;
     public DateTime ExpiryDate { get; set; }
-    public DateTime DateModified { get; set; }
+    public DateTime? DateModified { get; set; }
 }

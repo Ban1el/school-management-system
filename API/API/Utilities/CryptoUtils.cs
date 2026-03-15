@@ -5,17 +5,20 @@ namespace API.Utilities;
 
 public class CryptoUtils
 {
-    public static byte[] GenerateSalt(int size = 16)
+    public string GenerateSalt(int size = 16)
     {
-        return RandomNumberGenerator.GetBytes(size);
+        var saltBytes = RandomNumberGenerator.GetBytes(size);
+        return Convert.ToBase64String(saltBytes);
     }
 
-    public static string HashPassword(string password, byte[] salt)
+    public string HashPassword(string password, string salt)
     {
+        byte[] saltBytes = Convert.FromBase64String(salt);
+
         byte[] hash = Rfc2898DeriveBytes.Pbkdf2(
             password: Encoding.UTF8.GetBytes(password),
-            salt: salt,
-            iterations: 100000,
+            salt: saltBytes,
+            iterations: 100_000,
             hashAlgorithm: HashAlgorithmName.SHA512,
             outputLength: 64
         );
@@ -23,7 +26,7 @@ public class CryptoUtils
         return Convert.ToHexString(hash);
     }
 
-    public static string GenerateRandomKey()
+    public string GenerateRandomKey()
     {
         byte[] key = RandomNumberGenerator.GetBytes(32);
         string result = Convert.ToBase64String(key);
