@@ -9,6 +9,8 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Data\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
 
   <ItemGroup>
