@@ -1,11 +1,12 @@
 using System;
 using API.Data;
+using API.Models;
 using API.Utilities;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Models;
+namespace API.Data.Seed;
 
-public class SeedData
+public class UserSeedData
 {
     public static void Initialize(IServiceProvider serviceProvider)
     {

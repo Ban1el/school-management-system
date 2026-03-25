@@ -1,3 +1,4 @@
+using API.Data.Seed;
 using API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,9 +9,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-
-    SeedData.Initialize(services);
+    UserSeedData.Initialize(scope.ServiceProvider);
 }
 
 app.UseHttpsRedirection();

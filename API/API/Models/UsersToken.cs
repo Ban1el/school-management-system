@@ -2,7 +2,7 @@ using System;
 
 namespace API.Models;
 
-public class UsersToken
+public class UserToken
 {
     public int Id { get; set; }
     public int UserId { get; set; }

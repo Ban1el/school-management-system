@@ -1,8 +1,8 @@
 using System;
 
-namespace API.Models;
+namespace API.DTOs.ErrorLog;
 
-public class ErrorLog
+public class ErrorLogCreateDto
 {
     public int Id { get; set; }
     public int UserId { get; set; }

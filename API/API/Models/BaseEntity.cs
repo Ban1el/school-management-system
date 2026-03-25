@@ -2,7 +2,7 @@ using System;
 
 namespace API.Models;
 
-public abstract class BaseEntity
+public class BaseEntity
 {
     public DateTime DateCreated { get; set; }
     public DateTime? DateModified { get; set; }

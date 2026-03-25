@@ -7,13 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Attributes\" />
     <Folder Include="Common\" />
+    <Folder Include="Constants\" />
     <Folder Include="Controllers\" />
     <Folder Include="Data\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="DTOs\Users\" />
+    <Folder Include="Data\Seed\" />
+    <Folder Include="DTOs\User\" />
     <Folder Include="Errors\" />
+    <Folder Include="Exceptions\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Logs\" />
+    <Folder Include="Logs\Errors\" />
     <Folder Include="Middleware\" />
     <Folder Include="Services\" />
     <Folder Include="Utilities\" />
@@ -24,6 +29,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.5" />
+    <PackageReference Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
   </ItemGroup>
 
 </Project>

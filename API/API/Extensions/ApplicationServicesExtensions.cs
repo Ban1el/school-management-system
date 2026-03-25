@@ -10,12 +10,14 @@ public static class ApplicationServicesExtensions
         services.AddControllers();
         services.AddScoped<UserAuthService>();
         services.AddScoped<TokenService>();
+        services.AddScoped<ErrorLogService>();
+        services.AddScoped<AuditTrailService>();
         services.AddDbContext<AppDbContext>(options =>
                options.UseSqlServer(config.GetConnectionString("SMSDatabase")));
         string base64Key = config["Encryption:Key"]
              ?? throw new InvalidOperationException("Encryption key not found in configuration.");
         CryptoExtensions.SetKey(base64Key);
-
+        services.AddIdentityServices(config);
         return services;
     }
 }

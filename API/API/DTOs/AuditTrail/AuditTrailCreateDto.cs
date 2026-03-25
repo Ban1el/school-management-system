@@ -1,10 +1,9 @@
 using System;
 
-namespace API.Models;
+namespace API.DTOs.AudiTrail;
 
-public class AuditTrail
+public class AuditTrailCreateDto
 {
-    public int Id { get; set; }
     public int UserId { get; set; }
     public string Module { get; set; } = string.Empty;
     public string Action { get; set; } = string.Empty;

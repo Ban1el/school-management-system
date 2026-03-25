@@ -1,3 +1,5 @@
+using API.Attributes;
+using API.Constants;
 using API.DTOs.Users;
 using API.Services;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost("signin")]
+        [AuditTrail(Module = ModuleConstants.UserAuthentication, Action = ActionConstants.Login)]
         public async Task<ActionResult<SignInResponseDto>> SignIn([FromBody] UserSigninDto dto)
         {
             var result = await _userAuthService.SignInAsync(dto);
