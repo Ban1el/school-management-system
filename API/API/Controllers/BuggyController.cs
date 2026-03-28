@@ -1,7 +1,6 @@
 using API.Attributes;
 using API.Constants;
 using API.DTOs.Buggy;
-using API.Enums;
 using API.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
