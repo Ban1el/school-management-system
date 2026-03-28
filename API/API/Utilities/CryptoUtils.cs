@@ -28,7 +28,7 @@ public class CryptoUtils
 
     public string GenerateRandomKey()
     {
-        byte[] key = RandomNumberGenerator.GetBytes(32);
+        byte[] key = RandomNumberGenerator.GetBytes(64);
         string result = Convert.ToBase64String(key);
         return result;
     }

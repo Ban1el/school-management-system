@@ -14,7 +14,7 @@ namespace API.Controllers
     public class BuggyController : ControllerBase
     {
         [HttpGet("test-log")]
-        [AuditTrail(Module = ModuleConstants.Buggy, Action = ActionConstants.Read)]
+        [AuditTrail(IsIgnore = true)]
         public async Task<IActionResult> TestLog()
         {
             throw new Exception("Test error message");

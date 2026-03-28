@@ -46,7 +46,45 @@ public class UserAuthService
 
         var signInResponse = new SignInResponseDto
         {
-            token = _tokenService.CreateToken(user)
+            accesstoken = _tokenService.CreateToken(user),
+            refreshtoken = await _tokenService.SetRefreshToken(user.Id),
+        };
+
+        return new ServiceResult<SignInResponseDto>
+        {
+            Success = true,
+            Data = signInResponse
+        };
+    }
+
+    public async Task<ServiceResult<SignInResponseDto>> RefreshAccessTokenAsync(string refreshToken)
+    {
+        var userToken = await _context.UserTokens
+            .Where(u => u.RefreshToken == refreshToken)
+            .Select(u => new { u.ExpiryDate, u.UserId })
+            .FirstOrDefaultAsync();
+
+        if (userToken == null || userToken.ExpiryDate <= DateTime.UtcNow)
+            throw new UnauthorizedAccessException();
+
+        var user = await _context.Users
+            .Where(u => u.Id == userToken.UserId)
+            .Select(u => new UserDto
+            {
+                Id = u.Id,
+                Email = u.Email,
+                RoleId = u.RoleId,
+                IsActive = u.IsActive
+            })
+            .FirstOrDefaultAsync();
+
+        if (user == null || user.IsActive == false)
+            throw new UnauthorizedAccessException();
+
+        var signInResponse = new SignInResponseDto
+        {
+            accesstoken = _tokenService.CreateToken(user),
+            refreshtoken = refreshToken,
         };
 
         return new ServiceResult<SignInResponseDto>

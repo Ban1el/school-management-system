@@ -12,12 +12,9 @@ public class UserTokenConfiguration : IEntityTypeConfiguration<UserToken>
         entity.ToTable("UserTokens");
         entity.HasKey(t => t.Id);
         entity.Property(t => t.Id).ValueGeneratedOnAdd();
-        entity.Property(t => t.AccessToken)
-        .IsRequired();
-        entity.Property(t => t.RefreshToken)
-        .IsRequired();
-        entity.Property(t => t.ExpiryDate)
-        .IsRequired();
+        entity.Property(t => t.RefreshToken).IsRequired(false);
+        entity.Property(t => t.ExpiryDate).IsRequired(false);
+        entity.Property(t => t.DateCreated).IsRequired(true);
         entity.Property(t => t.DateModified)
         .IsRequired(false);
 

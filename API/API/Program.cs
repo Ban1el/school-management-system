@@ -1,4 +1,5 @@
 using API.Data.Seed;
+using API.Middleware;
 using API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ using (var scope = app.Services.CreateScope())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseMiddleware<AuditTrailMiddleware>();
 
 app.MapControllers();
 

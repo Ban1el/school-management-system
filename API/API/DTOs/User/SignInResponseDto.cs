@@ -1,8 +1,13 @@
 using System;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace API.DTOs.Users;
 
 public class SignInResponseDto
 {
-    public string token { get; set; } = string.Empty;
+    [JsonIgnore]
+    public int userId { get; set; }
+    public string accesstoken { get; set; } = string.Empty;
+    public string refreshtoken { get; set; } = string.Empty;
 }

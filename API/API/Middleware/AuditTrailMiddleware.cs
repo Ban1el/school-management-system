@@ -57,46 +57,50 @@ public class AuditTrailMiddleware
         var auditAttr = endpoint?.Metadata.GetMetadata<AuditTrailAttribute>();
         var module = auditAttr?.Module ?? "Unknown";
         var action = auditAttr?.Action ?? "Unknown";
+        var isIgnore = auditAttr?.IsIgnore ?? false;
 
-        // ======== RESPONSE ========
-        memoryStream.Position = 0;
-        var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
-        memoryStream.Position = 0;
-        await memoryStream.CopyToAsync(originalResponseBody);
-        context.Response.Body = originalResponseBody;
-
-        object? parsedResponse = parseBody(responseBody);
-
-        // ======== REQUEST LOG ========
-        await auditService.CreateAsync(new AuditTrailCreateDto
+        if (!isIgnore)
         {
-            UserId = userId ?? 0,
-            Module = module,
-            Action = action,
-            Path = context.Request.Path,
-            Method = context.Request.Method,
-            Data = parsedRequest != null ? JsonSerializer.Serialize(parsedRequest) : string.Empty,
-            ClientIpAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            IsRequest = true,
-            DateCreated = DateTime.UtcNow
-        });
+            // ======== RESPONSE ========
+            memoryStream.Position = 0;
+            var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
+            memoryStream.Position = 0;
+            await memoryStream.CopyToAsync(originalResponseBody);
+            context.Response.Body = originalResponseBody;
 
-        var refId = context.Items[AuditTrailConstants.ReferenceId]?.ToString();
+            object? parsedResponse = parseBody(responseBody);
 
-        // ======== RESPONSE LOG ========
-        await auditService.CreateAsync(new AuditTrailCreateDto
-        {
-            UserId = userId ?? 0,
-            Module = module,
-            Action = action,
-            Path = context.Request.Path,
-            Method = context.Request.Method,
-            Data = parsedResponse != null ? JsonSerializer.Serialize(parsedResponse) : string.Empty,
-            ClientIpAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            IsRequest = false,
-            DateCreated = DateTime.UtcNow,
-            RefId = refId?.ToString() ?? ""
-        });
+            // ======== REQUEST LOG ========
+            await auditService.CreateAsync(new AuditTrailCreateDto
+            {
+                UserId = userId ?? 0,
+                Module = module,
+                Action = action,
+                Path = context.Request.Path,
+                Method = context.Request.Method,
+                Data = parsedRequest != null ? JsonSerializer.Serialize(parsedRequest) : string.Empty,
+                ClientIpAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+                IsRequest = true,
+                DateCreated = DateTime.UtcNow
+            });
+
+            var refId = context.Items[AuditTrailConstants.ReferenceId]?.ToString();
+
+            // ======== RESPONSE LOG ========
+            await auditService.CreateAsync(new AuditTrailCreateDto
+            {
+                UserId = userId ?? 0,
+                Module = module,
+                Action = action,
+                Path = context.Request.Path,
+                Method = context.Request.Method,
+                Data = parsedResponse != null ? JsonSerializer.Serialize(parsedResponse) : string.Empty,
+                ClientIpAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+                IsRequest = false,
+                DateCreated = DateTime.UtcNow,
+                RefId = refId?.ToString() ?? ""
+            });
+        }
     }
 
     public object? parseBody(string requestBody)
