@@ -5,5 +5,5 @@ public class AuditTrailAttribute : Attribute
 {
     public string Module { get; set; } = "Unknown";
     public string Action { get; set; } = "Unknown";
-    public bool IsIgnore { get; set; } = true;
+    public bool IsIgnore { get; set; } = false;
 }

@@ -1,0 +1,37 @@
+<div class="flex items-center justify-center h-screen">
+  <div class="flex">
+    <div class="w-64 flex-1">
+      <div class="card bg-base-100 w-96 shadow-lg p-10">
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
+          <h2 class="card-title font-bold">Login</h2>
+          <div class="card-body px-0 py-3">
+            <div class="grid grid-cols-[5rem_1fr] items-center gap-2">
+              <span class="font-medium">Username: </span>
+              <input
+                type="text"
+                placeholder="Enter username"
+                class="input input-neutral input-md"
+                formControlName="username"
+                name="username"
+              />
+            </div>
+            <div class="grid grid-cols-[5rem_1fr] items-center gap-2">
+              <span class="font-medium">Password: </span>
+              <input
+                type="password"
+                placeholder="Enter password"
+                class="input input-neutral input-md"
+                formControlName="password"
+                name="password"
+              />
+            </div>
+            <div class="flex flex-col items-end">
+              <button type="submit" class="btn btn-md btn-primary rounded-xl">Login</button>
+              <a href="#" class="text-primary underline hover:opacity-75">Forgot password?</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -13,6 +13,8 @@ using (var scope = app.Services.CreateScope())
     UserSeedData.Initialize(scope.ServiceProvider);
 }
 
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:4200"));
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

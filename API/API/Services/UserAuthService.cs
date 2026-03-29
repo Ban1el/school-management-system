@@ -93,4 +93,29 @@ public class UserAuthService
             Data = signInResponse
         };
     }
+
+    public async Task RevokeRefreshTokenAsync(string refreshToken)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            var userToken = await _context.UserTokens.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
+
+            if (userToken == null) return;
+
+            userToken.RefreshToken = null;
+            userToken.ExpiryDate = null;
+            userToken.DateModified = DateTime.UtcNow;
+
+            _context.UserTokens.Update(userToken);
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
 }
