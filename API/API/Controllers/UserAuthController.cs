@@ -33,8 +33,9 @@ namespace API.Controllers
             }
 
             await SetRefreshTokenCookie(result.Data!.refreshtoken);
+            await SetAccessTokenCookie(result.Data!.accesstoken);
 
-            return Ok(result.Data);
+            return Ok();
         }
 
         [HttpPost("logout")]
@@ -49,6 +50,13 @@ namespace API.Controllers
             }
 
             Response.Cookies.Delete("refreshToken", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict
+            });
+
+            Response.Cookies.Delete("accessToken", new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
@@ -70,7 +78,7 @@ namespace API.Controllers
             return Ok(result.Data);
         }
 
-        private async Task<string> SetRefreshTokenCookie(string refreshToken)
+        private async Task SetRefreshTokenCookie(string refreshToken)
         {
             var cookieOptions = new CookieOptions
             {
@@ -81,8 +89,19 @@ namespace API.Controllers
             };
 
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
 
-            return refreshToken;
+        private async Task SetAccessTokenCookie(string accessToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_config["TokenSettings:AccessTokenExpiryMinutes"]))
+            };
+
+            Response.Cookies.Append("accessToken", accessToken, cookieOptions);
         }
     }
 }

@@ -24,6 +24,21 @@ public static class IdentityServiceExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey)),
                 ClockSkew = TimeSpan.Zero
             };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var token = context.Request.Cookies["accessToken"];
+
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        context.Token = token;
+                    }
+
+                    return Task.CompletedTask;
+                }
+            };
         });
 
         services.AddAuthorizationBuilder()

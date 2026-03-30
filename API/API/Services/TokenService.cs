@@ -44,8 +44,8 @@ public class TokenService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims.ToArray()),
-            // Expires = DateTime.Now.AddMinutes(Convert.ToInt32(_config["TokenSettings:AccessTokenExpiryMinutes"])),
-            Expires = DateTime.Now.AddSeconds(1),
+            Expires = DateTime.Now.AddMinutes(Convert.ToInt32(_config["TokenSettings:AccessTokenExpiryMinutes"])),
+            // Expires = DateTime.Now.AddSeconds(1),
             IssuedAt = DateTime.Now,
             Issuer = issuer,
             Audience = audience,
@@ -78,8 +78,8 @@ public class TokenService
             if (currentUserToken != null)
             {
                 currentUserToken.RefreshToken = refreshToken;
-                // currentUserToken.ExpiryDate = expiryDate;
-                currentUserToken.ExpiryDate = DateTime.UtcNow.AddSeconds(1);
+                currentUserToken.ExpiryDate = expiryDate;
+                // currentUserToken.ExpiryDate = DateTime.UtcNow.AddSeconds(1);
                 currentUserToken.DateModified = DateTime.UtcNow;
                 await _context.UserTokens.AddAsync(currentUserToken);
                 _context.UserTokens.Update(currentUserToken);

@@ -4,5 +4,4 @@ export type UserDto = {
   username: string;
   email: string;
   isActive: boolean;
-  token: string;
 };

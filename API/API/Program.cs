@@ -1,6 +1,7 @@
 using API.Data.Seed;
 using API.Middleware;
 using API.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 

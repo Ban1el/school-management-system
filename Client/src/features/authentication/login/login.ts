@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastService } from '../../../core/services/toast-service';
 import { UserAuthService } from '../../../core/services/user-auth-service';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -34,7 +34,7 @@ export class Login {
     const formData = { ...this.loginForm.value };
     this.userAuthService.login(formData).subscribe({
       next: () => {
-        this.router.navigateByUrl('/user/management');
+        this.router.navigateByUrl('home');
         this.toastService.success('Login successful!');
       },
       error: (err) => {},

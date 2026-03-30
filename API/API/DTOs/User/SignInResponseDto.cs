@@ -8,6 +8,8 @@ public class SignInResponseDto
 {
     [JsonIgnore]
     public int userId { get; set; }
+    [JsonIgnore]
     public string accesstoken { get; set; } = string.Empty;
+    [JsonIgnore]
     public string refreshtoken { get; set; } = string.Empty;
 }

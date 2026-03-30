@@ -22,12 +22,12 @@ public class UserSeedData
             CryptoUtils _crypto = new CryptoUtils();
             string passwordSalt = _crypto.GenerateSalt();
 
-            var adminRole = context.Roles.FirstOrDefault(r => r.Name == "Admin");
+            var adminRole = context.Roles.FirstOrDefault(r => r.Name == "admin");
             if (adminRole == null)
             {
                 adminRole = new Role
                 {
-                    Name = "Admin",
+                    Name = "admin",
                     DateCreated = DateTime.Now,
                     CreatedBy = 0,
                     ModifiedBy = 0,
@@ -37,12 +37,12 @@ public class UserSeedData
                 context.SaveChanges();
             }
 
-            if (!context.Users.Any(u => u.Username == "Admin"))
+            if (!context.Users.Any(u => u.Username == "admin"))
             {
                 var adminUser = new User
                 {
                     RoleId = adminRole.Id,
-                    Username = "Admin",
+                    Username = "admin",
                     Email = "test@test.com",
                     Password = _crypto.HashPassword("admin@123", passwordSalt),
                     PasswordSalt = passwordSalt,
