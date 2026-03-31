@@ -7,7 +7,7 @@ import { authGuard } from '../core/guards/auth-guard';
 import { isLoggedInGuard } from '../core/guards/is-logged-in-guard';
 
 export const routes: Routes = [
-  { path: 'login', component: Login, canActivate: [isLoggedInGuard] },
+  { path: '', component: Login, canActivate: [isLoggedInGuard] },
   {
     path: '',
     runGuardsAndResolvers: 'always',

@@ -44,8 +44,8 @@ public class TokenService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims.ToArray()),
-            Expires = DateTime.Now.AddMinutes(Convert.ToInt32(_config["TokenSettings:AccessTokenExpiryMinutes"])),
-            // Expires = DateTime.Now.AddSeconds(1),
+            // Expires = DateTime.Now.AddMinutes(Convert.ToInt32(_config["TokenSettings:AccessTokenExpiryMinutes"])),
+            Expires = DateTime.Now.AddSeconds(5),
             IssuedAt = DateTime.Now,
             Issuer = issuer,
             Audience = audience,

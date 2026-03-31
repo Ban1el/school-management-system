@@ -1,9 +1,9 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { UserDto } from '../../types/User/UserDto';
 import { environment } from '../../environments/environment.development';
 import { UserSigninDto } from '../../types/User/UserSigninDto';
-import { tap } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { SkipLoading } from '../interceptors/loading-interceptor';
 
 @Injectable({
@@ -11,25 +11,29 @@ import { SkipLoading } from '../interceptors/loading-interceptor';
 })
 export class UserAuthService {
   private http = inject(HttpClient);
-  currentUser = signal<UserDto | null>(null);
   private baseUrl = environment.apiUrl;
+  private _isAuthenticated = signal(false);
+  isAuthenticated = computed(() => this._isAuthenticated());
 
   login(dto: UserSigninDto) {
     return this.http
       .post<UserDto>(this.baseUrl + 'user/auth/signin', dto, {
         withCredentials: true,
       })
-      .pipe(
-        tap((user) => {
-          if (user) {
-            this.setCurrentUser(user);
-          }
-        }),
-      );
+      .pipe(tap(() => this._isAuthenticated.set(true)));
+  }
+
+  verifySession(): Observable<boolean> {
+    return this.http.get(this.baseUrl + 'user/auth/verify').pipe(
+      tap(() => this._isAuthenticated.set(true)),
+      map(() => true),
+      catchError(() => of(false)),
+    );
   }
 
   setCurrentUser(user: UserDto) {
-    this.currentUser.set(user);
+    //To be used later
+    // this.currentUser.set(user);
   }
 
   logout() {
@@ -41,10 +45,10 @@ export class UserAuthService {
           withCredentials: true,
         },
       )
-      .pipe(
-        tap(() => {
-          this.currentUser.set(null);
-        }),
-      );
+      .pipe(tap(() => this._isAuthenticated.set(false)));
+  }
+
+  refreshToken() {
+    return this.http.post(this.baseUrl + 'user/auth/refresh/token', {});
   }
 }

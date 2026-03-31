@@ -3,6 +3,7 @@ using API.Constants;
 using API.DTOs.Users;
 using API.Extensions;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -77,6 +78,11 @@ namespace API.Controllers
 
             return Ok(result.Data);
         }
+
+        [HttpGet("verify")]
+        [Authorize]
+        [AuditTrail(IsIgnore = true)]
+        public IActionResult Verify() => Ok();
 
         private async Task SetRefreshTokenCookie(string refreshToken)
         {

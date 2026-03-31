@@ -7,12 +7,10 @@ export const authGuard: CanActivateFn = () => {
   const userAuthService = inject(UserAuthService);
   const toastService = inject(ToastService);
   const router = inject(Router);
-  const user = userAuthService.currentUser();
-  const hasRefreshToken = document.cookie.includes('refreshToken');
 
-  if (hasRefreshToken == null) {
+  if (!userAuthService.isAuthenticated()) {
     toastService.error('Access Restricted');
-    router.navigateByUrl('/login');
+    router.navigateByUrl('/');
     return false;
   }
 
