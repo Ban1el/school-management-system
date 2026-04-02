@@ -8,6 +8,7 @@ using API.DTOs.Users;
 using API.Data;
 using API.Utilities;
 using API.Models;
+using API.Repositories.Interfaces;
 
 namespace API.Services;
 
@@ -15,9 +16,11 @@ public class TokenService
 {
     private readonly AppDbContext _context;
     private readonly IConfiguration _config;
+    private readonly IUnitOfWork _uow;
 
-    public TokenService(AppDbContext context, IConfiguration config)
+    public TokenService(IUnitOfWork uow, AppDbContext context, IConfiguration config)
     {
+        _uow = uow;
         _context = context;
         _config = config;
     }
@@ -44,8 +47,8 @@ public class TokenService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims.ToArray()),
-            // Expires = DateTime.Now.AddMinutes(Convert.ToInt32(_config["TokenSettings:AccessTokenExpiryMinutes"])),
-            Expires = DateTime.Now.AddSeconds(5),
+            Expires = DateTime.Now.AddMinutes(Convert.ToInt32(_config["TokenSettings:AccessTokenExpiryMinutes"])),
+            // Expires = DateTime.Now.AddSeconds(5),
             IssuedAt = DateTime.Now,
             Issuer = issuer,
             Audience = audience,
@@ -62,48 +65,21 @@ public class TokenService
     public async Task<string> SetRefreshToken(int userId)
     {
         CryptoUtils _crypto = new CryptoUtils();
-
-        using var transaction = await _context.Database.BeginTransactionAsync();
-
         string refreshToken = "";
+        refreshToken = _crypto.GenerateRandomKey();
+        DateTime expiryDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_config["TokenSettings:RefreshTokenExpiryDays"]));
+
+        await _uow.BeginTransactionAsync();
 
         try
         {
-            var currentUserToken = _context.UserTokens.Where(t => t.UserId == userId).FirstOrDefault();
-
-            refreshToken = _crypto.GenerateRandomKey();
-
-            DateTime expiryDate = DateTime.UtcNow.AddDays(Convert.ToInt32(_config["TokenSettings:RefreshTokenExpiryDays"]));
-
-            if (currentUserToken != null)
-            {
-                currentUserToken.RefreshToken = refreshToken;
-                currentUserToken.ExpiryDate = expiryDate;
-                // currentUserToken.ExpiryDate = DateTime.UtcNow.AddSeconds(1);
-                currentUserToken.DateModified = DateTime.UtcNow;
-                await _context.UserTokens.AddAsync(currentUserToken);
-                _context.UserTokens.Update(currentUserToken);
-            }
-            else
-            {
-                var userTokenCreate = new UserToken
-                {
-                    UserId = userId,
-                    RefreshToken = refreshToken,
-                    // ExpiryDate = expiryDate;
-                    ExpiryDate = DateTime.UtcNow.AddSeconds(1),
-                    DateCreated = DateTime.UtcNow,
-                    DateModified = null,
-                };
-                await _context.UserTokens.AddAsync(userTokenCreate);
-            }
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
+            await _uow.UserTokens.UpsertTokenAsync(userId, refreshToken, expiryDate);
+            await _uow.SaveChangesAsync();
+            await _uow.CommitAsync();
         }
         catch
         {
-            await transaction.RollbackAsync();
+            await _uow.RollbackAsync();
             throw;
         }
 

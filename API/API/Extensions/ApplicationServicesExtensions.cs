@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.Extensions;
 using API.Services;
+using API.Repositories.Interfaces;
+using API.Repositories;
 
 public static class ApplicationServicesExtensions
 {
@@ -18,6 +20,13 @@ public static class ApplicationServicesExtensions
              ?? throw new InvalidOperationException("Encryption key not found in configuration.");
         CryptoExtensions.SetKey(base64Key);
         services.AddIdentityServices(config);
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+
+
+
         return services;
     }
 }

@@ -14,5 +14,5 @@ public class AuditTrailCreateDto
     public bool IsRequest { get; set; }
     public string Path { get; set; } = string.Empty;
     public string RefId { get; set; } = string.Empty;
-    public DateTime DateCreated { get; set; }
+    public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 }

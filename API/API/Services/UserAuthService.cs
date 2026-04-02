@@ -3,6 +3,7 @@ using API.Common;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using API.Utilities;
+using API.Repositories.Interfaces;
 
 namespace API.Services;
 
@@ -10,9 +11,11 @@ public class UserAuthService
 {
     private readonly AppDbContext _context;
     private readonly TokenService _tokenService;
+    private readonly IUnitOfWork _uow;
 
-    public UserAuthService(AppDbContext context, TokenService tokenService)
+    public UserAuthService(IUnitOfWork uow, AppDbContext context, TokenService tokenService)
     {
+        _uow = uow;
         _context = context;
         _tokenService = tokenService;
     }
@@ -22,18 +25,7 @@ public class UserAuthService
         var result = new ServiceResult<SignInResponseDto>();
         CryptoUtils _crypto = new CryptoUtils();
 
-        var user = await _context.Users
-            .Where(u => u.Username == dto.Username)
-            .Select(u => new UserDto
-            {
-                Id = u.Id,
-                Email = u.Email,
-                RoleId = u.RoleId,
-                IsActive = u.IsActive,
-                Password = u.Password,
-                PasswordSalt = u.PasswordSalt
-            })
-            .FirstOrDefaultAsync();
+        var user = await _uow.Users.GetByUsernameAsync(dto.Username);
 
         if (user == null)
             return ServiceResult<SignInResponseDto>.Fail("Invalid username.");
@@ -59,24 +51,12 @@ public class UserAuthService
 
     public async Task<ServiceResult<SignInResponseDto>> RefreshAccessTokenAsync(string refreshToken)
     {
-        var userToken = await _context.UserTokens
-            .Where(u => u.RefreshToken == refreshToken)
-            .Select(u => new { u.ExpiryDate, u.UserId })
-            .FirstOrDefaultAsync();
+        var userToken = await _uow.UserTokens.GetByRefreshTokenAsync(refreshToken);
 
         if (userToken == null || userToken.ExpiryDate <= DateTime.UtcNow)
             throw new UnauthorizedAccessException();
 
-        var user = await _context.Users
-            .Where(u => u.Id == userToken.UserId)
-            .Select(u => new UserDto
-            {
-                Id = u.Id,
-                Email = u.Email,
-                RoleId = u.RoleId,
-                IsActive = u.IsActive
-            })
-            .FirstOrDefaultAsync();
+        var user = await _uow.Users.GetByIdAsync(userToken.UserId);
 
         if (user == null || user.IsActive == false)
             throw new UnauthorizedAccessException();
@@ -96,25 +76,17 @@ public class UserAuthService
 
     public async Task RevokeRefreshTokenAsync(string refreshToken)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        await _uow.BeginTransactionAsync();
 
         try
         {
-            var userToken = await _context.UserTokens.FirstOrDefaultAsync(x => x.RefreshToken == refreshToken);
-
-            if (userToken == null) return;
-
-            userToken.RefreshToken = null;
-            userToken.ExpiryDate = null;
-            userToken.DateModified = DateTime.UtcNow;
-
-            _context.UserTokens.Update(userToken);
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
+            await _uow.UserTokens.RevokeRefreshTokenAsync(refreshToken);
+            await _uow.SaveChangesAsync();
+            await _uow.CommitAsync();
         }
         catch
         {
-            await transaction.RollbackAsync();
+            await _uow.RollbackAsync();
             throw;
         }
     }

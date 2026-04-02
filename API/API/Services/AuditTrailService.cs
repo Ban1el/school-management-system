@@ -2,46 +2,34 @@ using System;
 using API.Data;
 using API.DTOs.AudiTrail;
 using API.Models;
+using API.Repositories.Interfaces;
 
 namespace API.Services;
 
 public class AuditTrailService
 {
     private readonly AppDbContext _context;
+    private readonly IUnitOfWork _uow;
 
-    public AuditTrailService(AppDbContext context)
+    public AuditTrailService(IUnitOfWork uow, AppDbContext context)
     {
+        _uow = uow;
         _context = context;
     }
 
     public async Task CreateAsync(AuditTrailCreateDto dto)
     {
-        using var transaction = await _context.Database.BeginTransactionAsync();
+        await _uow.BeginTransactionAsync();
+
         try
         {
-            var auditTrail = new AuditTrail
-            {
-                UserId = dto.UserId,
-                Module = dto.Module,
-                Action = dto.Action,
-                Method = dto.Method,
-                Description = dto.Description,
-                Data = dto.Data,
-                ClientIpAddress = dto.ClientIpAddress,
-                IsRequest = dto.IsRequest,
-                Path = dto.Path,
-                RefId = dto.RefId,
-                DateCreated = dto.DateCreated
-            };
-
-            await _context.AuditTrails.AddAsync(auditTrail);
-            await _context.SaveChangesAsync();
-
-            await transaction.CommitAsync();
+            await _uow.AuditTrails.CreateAsync(dto.UserId, dto.Module, dto.Action, dto.Method, dto.Description, dto.Data, dto.ClientIpAddress, dto.IsRequest, dto.Path, dto.RefId);
+            await _uow.SaveChangesAsync();
+            await _uow.CommitAsync();
         }
         catch
         {
-            await transaction.RollbackAsync();
+            await _uow.RollbackAsync();
             throw;
         }
     }

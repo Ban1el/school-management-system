@@ -8,5 +8,5 @@ public class ErrorLog
     public int UserId { get; set; }
     public string Description { get; set; } = string.Empty;
     public string ClientIpAddress { get; set; } = string.Empty;
-    public DateTime DateCreated { get; set; }
+    public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 }
