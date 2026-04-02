@@ -5,6 +5,7 @@ import { Home } from '../features/home/home';
 import { Nav } from '../layout/nav/nav';
 import { authGuard } from '../core/guards/auth-guard';
 import { isLoggedInGuard } from '../core/guards/is-logged-in-guard';
+import { UserProfile } from '../features/user-profile/user-profile';
 
 export const routes: Routes = [
   { path: '', component: Login, canActivate: [isLoggedInGuard] },
@@ -16,6 +17,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: Home },
       { path: 'user/management', component: UserManagement },
+      { path: 'user/profile', component: UserProfile },
     ],
   },
 ];

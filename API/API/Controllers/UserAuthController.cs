@@ -76,6 +76,8 @@ namespace API.Controllers
 
             var result = await _userAuthService.RefreshAccessTokenAsync(refreshToken);
 
+            if (result.Data != null) await SetAccessTokenCookie(result.Data.accesstoken);
+
             return Ok(result.Data);
         }
 

@@ -12,6 +12,12 @@ export class Nav {
   protected userAuthService = inject(UserAuthService);
   private router = inject(Router);
 
+  isSidebarOpen = true;
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
   logout() {
     this.userAuthService.logout().subscribe({
       next: () => {
