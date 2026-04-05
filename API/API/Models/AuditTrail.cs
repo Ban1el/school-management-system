@@ -5,7 +5,7 @@ namespace API.Models;
 public class AuditTrail
 {
     public int Id { get; set; }
-    public int UserId { get; set; }
+    public int? UserId { get; set; }
     public string Module { get; set; } = string.Empty;
     public string Action { get; set; } = string.Empty;
     public string Method { get; set; } = string.Empty;

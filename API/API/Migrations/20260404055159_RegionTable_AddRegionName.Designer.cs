@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260404055159_RegionTable_AddRegionName")]
+    partial class RegionTable_AddRegionName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,14 +58,27 @@ namespace API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PsgcCode")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
 
+                    b.HasIndex("PsgcCode")
+                        .IsUnique();
+
                     b.ToTable("Barangays", (string)null);
                 });
 
-            modelBuilder.Entity("API.Models.Address.CityMunicipality", b =>
+            modelBuilder.Entity("API.Models.Address.City", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -92,19 +108,22 @@ namespace API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("ProvinceId")
+                    b.Property<int>("ProvinceId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RegionId")
-                        .HasColumnType("int");
+                    b.Property<string>("PsgcCode")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProvinceId");
 
-                    b.HasIndex("RegionId");
+                    b.HasIndex("PsgcCode")
+                        .IsUnique();
 
-                    b.ToTable("CitiesMunicipalities", (string)null);
+                    b.ToTable("Cities", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Address.Province", b =>
@@ -137,10 +156,18 @@ namespace API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PsgcCode")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
                     b.Property<int>("RegionId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PsgcCode")
+                        .IsUnique();
 
                     b.HasIndex("RegionId");
 
@@ -177,7 +204,20 @@ namespace API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PsgcCode")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.Property<string>("RegionName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PsgcCode")
+                        .IsUnique();
 
                     b.ToTable("Regions", (string)null);
                 });
@@ -320,7 +360,7 @@ namespace API.Migrations
                     b.Property<int?>("BarangayId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CityMunicipalityId")
+                    b.Property<int?>("CityId")
                         .HasColumnType("int");
 
                     b.Property<int?>("CreatedBy")
@@ -391,7 +431,7 @@ namespace API.Migrations
 
                     b.HasIndex("BarangayId");
 
-                    b.HasIndex("CityMunicipalityId");
+                    b.HasIndex("CityId");
 
                     b.HasIndex("ProvinceId");
 
@@ -437,39 +477,29 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Address.Barangay", b =>
                 {
-                    b.HasOne("API.Models.Address.CityMunicipality", null)
+                    b.HasOne("API.Models.Address.City", null)
                         .WithMany()
                         .HasForeignKey("CityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("API.Models.Address.CityMunicipality", b =>
+            modelBuilder.Entity("API.Models.Address.City", b =>
                 {
-                    b.HasOne("API.Models.Address.Province", "Province")
+                    b.HasOne("API.Models.Address.Province", null)
                         .WithMany()
                         .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("API.Models.Address.Region", "Region")
-                        .WithMany()
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Province");
-
-                    b.Navigation("Region");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("API.Models.Address.Province", b =>
                 {
-                    b.HasOne("API.Models.Address.Region", "Region")
+                    b.HasOne("API.Models.Address.Region", null)
                         .WithMany()
                         .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("API.Models.User", b =>
@@ -479,9 +509,9 @@ namespace API.Migrations
                         .HasForeignKey("BarangayId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("API.Models.Address.CityMunicipality", null)
+                    b.HasOne("API.Models.Address.City", null)
                         .WithMany()
-                        .HasForeignKey("CityMunicipalityId")
+                        .HasForeignKey("CityId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("API.Models.Address.Province", null)

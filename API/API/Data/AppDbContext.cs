@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using API.Models.Address;
 
 namespace API.Data
 {
@@ -12,7 +13,10 @@ namespace API.Data
             public DbSet<Role> Roles { get; set; }
             public DbSet<AuditTrail> AuditTrails { get; set; }
             public DbSet<ErrorLog> ErrorLogs { get; set; }
-
+            public DbSet<Region> Regions { get; set; }
+            public DbSet<Province> Provinces { get; set; }
+            public DbSet<CityMunicipality> CitiesMunicipalities { get; set; }
+            public DbSet<Barangay> Barangays { get; set; }
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                   modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);

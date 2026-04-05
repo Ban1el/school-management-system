@@ -12,7 +12,7 @@ export class Nav {
   protected userAuthService = inject(UserAuthService);
   private router = inject(Router);
 
-  isSidebarOpen = true;
+  isSidebarOpen = false;
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;

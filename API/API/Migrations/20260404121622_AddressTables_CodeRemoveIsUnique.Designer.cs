@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260404121622_AddressTables_CodeRemoveIsUnique")]
+    partial class AddressTables_CodeRemoveIsUnique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,6 +35,11 @@ namespace API.Migrations
 
                     b.Property<int>("CityId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
 
                     b.Property<int?>("CreatedBy")
                         .HasColumnType("int");
@@ -59,6 +67,8 @@ namespace API.Migrations
 
                     b.HasIndex("CityId");
 
+                    b.HasIndex("Code");
+
                     b.ToTable("Barangays", (string)null);
                 });
 
@@ -69,6 +79,11 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int?>("CreatedBy")
                         .HasColumnType("int");
@@ -92,17 +107,24 @@ namespace API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("ProvinceId")
+                    b.Property<int>("ProvinceId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RegionId")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProvinceId");
+                    b.HasIndex("Code");
 
-                    b.HasIndex("RegionId");
+                    b.HasIndex("ProvinceId");
 
                     b.ToTable("CitiesMunicipalities", (string)null);
                 });
@@ -114,6 +136,11 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int?>("CreatedBy")
                         .HasColumnType("int");
@@ -142,6 +169,8 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code");
+
                     b.HasIndex("RegionId");
 
                     b.ToTable("Provinces", (string)null);
@@ -154,6 +183,11 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int?>("CreatedBy")
                         .HasColumnType("int");
@@ -178,6 +212,8 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code");
 
                     b.ToTable("Regions", (string)null);
                 });
@@ -446,30 +482,20 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Address.CityMunicipality", b =>
                 {
-                    b.HasOne("API.Models.Address.Province", "Province")
+                    b.HasOne("API.Models.Address.Province", null)
                         .WithMany()
                         .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("API.Models.Address.Region", "Region")
-                        .WithMany()
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Province");
-
-                    b.Navigation("Region");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("API.Models.Address.Province", b =>
                 {
-                    b.HasOne("API.Models.Address.Region", "Region")
+                    b.HasOne("API.Models.Address.Region", null)
                         .WithMany()
                         .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("API.Models.User", b =>

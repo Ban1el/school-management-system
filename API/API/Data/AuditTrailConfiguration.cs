@@ -13,7 +13,7 @@ public class AuditTrailConfiguration : IEntityTypeConfiguration<AuditTrail>
         entity.HasKey(a => a.Id);
         entity.Property(a => a.Id).ValueGeneratedOnAdd();
 
-        entity.Property(a => a.UserId).HasDefaultValue(0);
+        entity.Property(a => a.UserId).IsRequired(false);
 
         entity.Property(a => a.Module)
             .HasMaxLength(100);

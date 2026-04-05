@@ -11,7 +11,6 @@
     <Folder Include="Common\" />
     <Folder Include="Constants\" />
     <Folder Include="Controllers\" />
-    <Folder Include="Data\" />
     <Folder Include="Data\Seed\" />
     <Folder Include="DTOs\UserToken\" />
     <Folder Include="Errors\" />

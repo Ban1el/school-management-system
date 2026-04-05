@@ -29,8 +29,8 @@ public class UserSeedData
                 {
                     Name = "admin",
                     DateCreated = DateTime.Now,
-                    CreatedBy = 0,
-                    ModifiedBy = 0,
+                    CreatedBy = null,
+                    ModifiedBy = null,
                     IsActive = true
                 };
                 context.Roles.Add(adminRole);
@@ -47,8 +47,8 @@ public class UserSeedData
                     Password = _crypto.HashPassword("admin@123", passwordSalt),
                     PasswordSalt = passwordSalt,
                     DateCreated = DateTime.Now,
-                    CreatedBy = 0,
-                    ModifiedBy = 0,
+                    CreatedBy = null,
+                    ModifiedBy = null,
                     IsActive = true
                 };
                 context.Users.Add(adminUser);

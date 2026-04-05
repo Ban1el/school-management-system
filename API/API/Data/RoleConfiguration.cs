@@ -21,9 +21,9 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         entity.Property(r => r.DateModified)
         .IsRequired(false);
         entity.Property(r => r.CreatedBy)
-        .IsRequired();
+        .IsRequired(false);
         entity.Property(r => r.ModifiedBy)
-        .IsRequired();
+        .IsRequired(false);
         entity.Property(r => r.IsActive)
         .HasDefaultValue(true);
     }

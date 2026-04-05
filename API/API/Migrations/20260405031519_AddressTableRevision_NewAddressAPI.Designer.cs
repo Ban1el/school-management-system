@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260405031519_AddressTableRevision_NewAddressAPI")]
+    partial class AddressTableRevision_NewAddressAPI
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -446,30 +449,24 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.Address.CityMunicipality", b =>
                 {
-                    b.HasOne("API.Models.Address.Province", "Province")
+                    b.HasOne("API.Models.Address.Province", null)
                         .WithMany()
                         .HasForeignKey("ProvinceId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("API.Models.Address.Region", "Region")
+                    b.HasOne("API.Models.Address.Region", null)
                         .WithMany()
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Province");
-
-                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("API.Models.Address.Province", b =>
                 {
-                    b.HasOne("API.Models.Address.Region", "Region")
+                    b.HasOne("API.Models.Address.Region", null)
                         .WithMany()
                         .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("API.Models.User", b =>
