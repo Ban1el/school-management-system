@@ -10,11 +10,11 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
     private IDbContextTransaction? _transaction;
-
     public IUserRepository Users { get; }
     public IUserTokenRepository UserTokens { get; }
     public IErrorLogRepository ErrorLogs { get; }
     public IAuditTrailRepository AuditTrails { get; }
+    public IAddressRepository Addresses { get; }
 
     public UnitOfWork(AppDbContext context)
     {
@@ -23,6 +23,7 @@ public class UnitOfWork : IUnitOfWork
         UserTokens = new UserTokenRepository(context);
         ErrorLogs = new ErrorLogRepository(context);
         AuditTrails = new AuditTrailRepository(context);
+        Addresses = new AddressRepository(context);
     }
 
     public async Task<int> SaveChangesAsync() =>

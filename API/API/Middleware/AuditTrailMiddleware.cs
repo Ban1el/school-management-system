@@ -59,15 +59,18 @@ public class AuditTrailMiddleware
         var action = auditAttr?.Action ?? "Unknown";
         var isIgnore = auditAttr?.IsIgnore ?? false;
 
+
+        // Reset to start
+        memoryStream.Position = 0;
+        // Read response as string for logging
+        var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
+        // Reset position again so it can be copied to original response
+        memoryStream.Position = 0;
+        await memoryStream.CopyToAsync(originalResponseBody);
+        context.Response.Body = originalResponseBody;
+
         if (!isIgnore)
         {
-            // ======== RESPONSE ========
-            memoryStream.Position = 0;
-            var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
-            memoryStream.Position = 0;
-            await memoryStream.CopyToAsync(originalResponseBody);
-            context.Response.Body = originalResponseBody;
-
             object? parsedResponse = parseBody(responseBody);
 
             // ======== REQUEST LOG ========

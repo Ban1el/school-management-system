@@ -1,0 +1,86 @@
+using System;
+using API.Data;
+using API.DTOs.Address;
+using API.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace API.Repositories;
+
+public class AddressRepository(AppDbContext _context) : IAddressRepository
+{
+    public async Task<List<RegionDto>> GetRegionsAsync()
+    {
+        return await _context.Regions.Select(r => new RegionDto
+        {
+            Id = r.Id,
+            Name = r.Name,
+            DateCreated = r.DateCreated,
+            CreatedBy = r.CreatedBy,
+            DateModified = r.DateModified,
+            ModifiedBy = r.ModifiedBy,
+            IsActive = r.IsActive
+        }).ToListAsync();
+    }
+
+    public async Task<List<ProvinceDto>> GetProvincesAsync(int id)
+    {
+        return await _context.Provinces.Where(p => p.RegionId == id).Select(p => new ProvinceDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            regionId = p.RegionId,
+            DateCreated = p.DateCreated,
+            CreatedBy = p.CreatedBy,
+            DateModified = p.DateModified,
+            ModifiedBy = p.ModifiedBy,
+            IsActive = p.IsActive
+        }).ToListAsync();
+    }
+
+    public async Task<List<CityMunicipalityDto>> GetCitiesMunicipalitiesAsync(int id, bool isNcr = false)
+    {
+        if (!isNcr)
+        {
+            return await _context.CitiesMunicipalities.Where(c => c.ProvinceId == id).Select(c => new CityMunicipalityDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ProvinceId = c.Id,
+                DateCreated = c.DateCreated,
+                CreatedBy = c.CreatedBy,
+                DateModified = c.DateModified,
+                ModifiedBy = c.ModifiedBy,
+                IsActive = c.IsActive
+            }).ToListAsync();
+        }
+        else
+        {
+            return await _context.CitiesMunicipalities.Where(c => c.RegionId == id).Select(c => new CityMunicipalityDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                RegionId = c.RegionId,
+                DateCreated = c.DateCreated,
+                CreatedBy = c.CreatedBy,
+                DateModified = c.DateModified,
+                ModifiedBy = c.ModifiedBy,
+                IsActive = c.IsActive
+            }).ToListAsync();
+        }
+    }
+
+    public async Task<List<BarangayDto>> GetBarangaysAsync(int id)
+    {
+        return await _context.Barangays.Where(b => b.CityId == id).Select(b => new BarangayDto
+        {
+            Id = b.Id,
+            Name = b.Name,
+            CityId = b.CityId,
+            DateCreated = b.DateCreated,
+            CreatedBy = b.CreatedBy,
+            DateModified = b.DateModified,
+            ModifiedBy = b.ModifiedBy,
+            IsActive = b.IsActive
+        }).ToListAsync();
+    }
+}

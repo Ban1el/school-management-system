@@ -8,6 +8,7 @@ public interface IUnitOfWork : IDisposable
     IUserTokenRepository UserTokens { get; }
     IErrorLogRepository ErrorLogs { get; }
     IAuditTrailRepository AuditTrails { get; }
+    IAddressRepository Addresses { get; }
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();
     Task CommitAsync();
