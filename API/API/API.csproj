@@ -14,6 +14,7 @@
     <Folder Include="Data\Seed\" />
     <Folder Include="DTOs\Address\" />
     <Folder Include="DTOs\Common\" />
+    <Folder Include="DTOs\Dropdown\" />
     <Folder Include="DTOs\UserToken\" />
     <Folder Include="Errors\" />
     <Folder Include="Exceptions\" />

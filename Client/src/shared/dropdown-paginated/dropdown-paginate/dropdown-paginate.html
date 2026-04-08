@@ -1,0 +1,52 @@
+<div class="dropdown w-full" [class.dropdown-open]="isOpen()">
+  <div
+    role="button"
+    class="input justify-start w-full cursor-pointer"
+    (click)="toggleDropdown($event)"
+  >
+    <span class="material-symbols-outlined">search</span>
+    {{ selectedItem?.name || label() }}
+  </div>
+
+  <div class="dropdown-content card card-sm bg-base-100 z-10 w-full shadow-md mt-1">
+    <div class="card-body p-3">
+      <fieldset class="fieldset mb-2">
+        <legend class="fieldset-legend">{{ legendLabel() }}</legend>
+        <input
+          type="text"
+          class="input input-xs w-full"
+          [placeholder]="placeholder()"
+          [formControl]="searchControl"
+        />
+      </fieldset>
+
+      <div class="divider m-0"></div>
+
+      <ul class="w-full p-0 max-h-40 overflow-y-auto" (scroll)="onScroll($event)">
+        <li class="mt-3 mb-3 cursor-pointer" (click)="selectItem(null, $event)">
+          <a>
+            {{ label() }}
+            @if (selectedItem?.id === 0) {
+              <span class="material-symbols-outlined ml-1 text-green-500">check</span>
+            }
+          </a>
+        </li>
+
+        @for (item of items(); track item.id) {
+          <li class="mt-3 mb-3 cursor-pointer" (click)="selectItem(item, $event)">
+            <a class="flex justify-between items-center w-full">
+              {{ item.name }}
+              @if (selectedItem?.id === item.id) {
+                <span class="material-symbols-outlined ml-1 text-green-500">check</span>
+              }
+            </a>
+          </li>
+        }
+
+        @if (loading()) {
+          <li class="text-center p-2 text-xs text-gray-500">Loading more...</li>
+        }
+      </ul>
+    </div>
+  </div>
+</div>

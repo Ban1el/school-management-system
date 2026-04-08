@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel;
 using API.Data;
 using API.DTOs.Address;
+using API.DTOs.Dropdown;
+using API.Helpers.Pagination;
 using API.Repositories.Interfaces;
 
 namespace API.Services;
@@ -22,14 +24,20 @@ public class AddressService
         return await _uow.Addresses.GetRegionsAsync();
     }
 
+    public async Task<PaginatedResult<DropdownDto>> GetRegionsPaginatedAsync(string? search, int pageNumber, int pageSize)
+    {
+        return await _uow.Addresses.GetRegionsPaginatedAsync(search, pageNumber, pageSize);
+    }
+
+
     public async Task<List<ProvinceDto>> GetProvincesAsync(int regionId)
     {
         return await _uow.Addresses.GetProvincesAsync(regionId);
     }
 
-    public async Task<List<CityMunicipalityDto>> GetCitiesMunicipalitiesAsync(int id, bool isNcr = false)
+    public async Task<List<CityMunicipalityDto>> GetCitiesMunicipalitiesAsync(int id, bool byRegion = false)
     {
-        return await _uow.Addresses.GetCitiesMunicipalitiesAsync(id, isNcr);
+        return await _uow.Addresses.GetCitiesMunicipalitiesAsync(id, byRegion);
     }
 
     public async Task<List<BarangayDto>> GetBarangaysAsync(int cityId)

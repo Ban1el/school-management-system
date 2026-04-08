@@ -80,12 +80,15 @@
   <div class="grid grid-cols-3 gap-2">
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Region</legend>
-      <select class="select w-full">
-        <option selected="selected" value="0">Select Region</option>
-        <!-- @for (dropdown of locationDropdown(); track $index) {
-          <option [value]="dropdown.id">{{ dropdown.name }}</option>
-        } -->
-      </select>
+      <app-dropdown-paginate
+        label="Select Region"
+        legendLabel="Region Name"
+        [items]="regionFilter.items()"
+        [loading]="regionFilter.loading()"
+        (searchChanged)="regionFilter.onSearch($event)"
+        (scrolledToBottom)="regionFilter.loadMore()"
+        (itemSelected)="onRegionSelected($event)"
+      />
     </fieldset>
 
     <fieldset class="fieldset">

@@ -1,6 +1,8 @@
 using System;
 using API.Data;
 using API.DTOs.Address;
+using API.DTOs.Dropdown;
+using API.Helpers.Pagination;
 using API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +24,30 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
         }).ToListAsync();
     }
 
+    public async Task<PaginatedResult<DropdownDto>> GetRegionsPaginatedAsync(string? search, int pageNumber, int pageSize)
+    {
+        var query = _context.Regions
+            .Where(r => r.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => r.Name.Contains(search));
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(r => r.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(r => new DropdownDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+            })
+            .ToListAsync();
+
+        return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
+    }
+
     public async Task<List<ProvinceDto>> GetProvincesAsync(int id)
     {
         return await _context.Provinces.Where(p => p.RegionId == id).Select(p => new ProvinceDto
@@ -37,9 +63,9 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
         }).ToListAsync();
     }
 
-    public async Task<List<CityMunicipalityDto>> GetCitiesMunicipalitiesAsync(int id, bool isNcr = false)
+    public async Task<List<CityMunicipalityDto>> GetCitiesMunicipalitiesAsync(int id, bool byRegion = false)
     {
-        if (!isNcr)
+        if (!byRegion)
         {
             return await _context.CitiesMunicipalities.Where(c => c.ProvinceId == id).Select(c => new CityMunicipalityDto
             {
