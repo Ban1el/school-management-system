@@ -1,4 +1,11 @@
-<div class="dropdown w-full" [class.dropdown-open]="isOpen()">
+<div
+  class="dropdown w-full"
+  [class.dropdown-open]="isOpen()"
+  [class.dropdown-top]="isAbove()"
+  [class.pointer-events-none]="isDisabled()"
+  [class.cursor-not-allowed]="isDisabled()"
+  [class.opacity-50]="isDisabled()"
+>
   <div
     role="button"
     class="input justify-start w-full cursor-pointer"

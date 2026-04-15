@@ -24,30 +24,6 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
         }).ToListAsync();
     }
 
-    public async Task<PaginatedResult<DropdownDto>> GetRegionsPaginatedAsync(string? search, int pageNumber, int pageSize)
-    {
-        var query = _context.Regions
-            .Where(r => r.IsActive);
-
-        if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(r => r.Name.Contains(search));
-
-        var totalCount = await query.CountAsync();
-
-        var items = await query
-            .OrderBy(r => r.Name)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .Select(r => new DropdownDto
-            {
-                Id = r.Id,
-                Name = r.Name,
-            })
-            .ToListAsync();
-
-        return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
-    }
-
     public async Task<List<ProvinceDto>> GetProvincesAsync(int id)
     {
         return await _context.Provinces.Where(p => p.RegionId == id).Select(p => new ProvinceDto
@@ -108,5 +84,105 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
             ModifiedBy = b.ModifiedBy,
             IsActive = b.IsActive
         }).ToListAsync();
+    }
+
+    public async Task<PaginatedResult<DropdownDto>> GetRegionsPaginatedAsync(string? search, int pageNumber, int pageSize)
+    {
+        var query = _context.Regions
+            .Where(r => r.IsActive);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => r.Name.Contains(search));
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(r => r.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(r => new DropdownDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+            })
+            .ToListAsync();
+
+        return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
+    }
+
+
+    public async Task<PaginatedResult<DropdownDto>> GetProvincesPaginatedAsync(string? search, int pageNumber, int pageSize, int regionId)
+    {
+        var query = _context.Provinces
+              .Where(r => r.IsActive && r.RegionId == regionId);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => r.Name.Contains(search));
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(r => r.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(r => new DropdownDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+            })
+            .ToListAsync();
+
+        return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<DropdownDto>> GetCitiesMunicipalitiesPaginatedAsync(string? search, int pageNumber, int pageSize, int id, bool byRegion = false)
+    {
+        var query = byRegion ?
+                     _context.CitiesMunicipalities
+                     .Where(r => r.IsActive && r.RegionId == id) :
+                     _context.CitiesMunicipalities
+                     .Where(r => r.IsActive && r.ProvinceId == id);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => r.Name.Contains(search));
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(r => r.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(r => new DropdownDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+            })
+            .ToListAsync();
+
+        return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<DropdownDto>> GetBarangaysPaginatedAsync(string? search, int pageNumber, int pageSize, int cityId)
+    {
+        var query = _context.Barangays
+            .Where(r => r.IsActive && r.CityId == cityId);
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(r => r.Name.Contains(search));
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(r => r.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(r => new DropdownDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+            })
+            .ToListAsync();
+
+        return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
     }
 }

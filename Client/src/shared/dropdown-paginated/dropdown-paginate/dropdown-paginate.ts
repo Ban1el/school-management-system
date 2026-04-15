@@ -48,6 +48,8 @@ export class DropdownPaginate implements ControlValueAccessor, OnInit, OnDestroy
 
   selectedItem: DropdownItem | null = null;
   isOpen = signal(false);
+  isAbove = signal(false);
+  isDisabled = signal(false);
   searchControl = new FormControl('');
 
   private destroy$ = new Subject<void>();
@@ -85,6 +87,10 @@ export class DropdownPaginate implements ControlValueAccessor, OnInit, OnDestroy
 
   toggleDropdown(event: MouseEvent) {
     event.stopPropagation();
+    if (this.isDisabled()) return;
+    if (!this.isOpen()) {
+      this.checkPosition();
+    }
     this.isOpen.set(!this.isOpen());
   }
 
@@ -107,5 +113,17 @@ export class DropdownPaginate implements ControlValueAccessor, OnInit, OnDestroy
 
   registerOnTouched(fn: () => void) {
     this.onTouched = fn;
+  }
+
+  checkPosition() {
+    const rect = this.elementRef.nativeElement.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const dropdownHeight = 300;
+
+    this.isAbove.set(spaceBelow < dropdownHeight);
+  }
+
+  setDisabledState(isDisabled: boolean) {
+    this.isDisabled.set(isDisabled);
   }
 }

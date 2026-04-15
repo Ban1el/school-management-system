@@ -24,12 +24,6 @@ public class AddressService
         return await _uow.Addresses.GetRegionsAsync();
     }
 
-    public async Task<PaginatedResult<DropdownDto>> GetRegionsPaginatedAsync(string? search, int pageNumber, int pageSize)
-    {
-        return await _uow.Addresses.GetRegionsPaginatedAsync(search, pageNumber, pageSize);
-    }
-
-
     public async Task<List<ProvinceDto>> GetProvincesAsync(int regionId)
     {
         return await _uow.Addresses.GetProvincesAsync(regionId);
@@ -44,4 +38,24 @@ public class AddressService
     {
         return await _uow.Addresses.GetBarangaysAsync(cityId);
     }
+
+    public async Task<PaginatedResult<DropdownDto>> GetRegionsPaginatedAsync(string? search, int pageNumber, int pageSize)
+    {
+        return await _uow.Addresses.GetRegionsPaginatedAsync(search, pageNumber, pageSize);
+    }
+
+    public async Task<PaginatedResult<DropdownDto>> GetProvincesPaginatedAsync(string? search, int pageNumber, int pageSize, int regionId)
+    {
+        return await _uow.Addresses.GetProvincesPaginatedAsync(search, pageNumber, pageSize, regionId);
+    }
+
+    public async Task<PaginatedResult<DropdownDto>> GetCitiesMunicipalitiesPaginatedAsync(string? search, int pageNumber, int pageSize, int id, bool byRegion = false)
+    {
+        return await _uow.Addresses.GetCitiesMunicipalitiesPaginatedAsync(search, pageNumber, pageSize, id, byRegion);
+    }
+    public async Task<PaginatedResult<DropdownDto>> GetBarangaysPaginatedAsync(string? search, int pageNumber, int pageSize, int cityId)
+    {
+        return await _uow.Addresses.GetBarangaysPaginatedAsync(search, pageNumber, pageSize, cityId);
+    }
+
 }

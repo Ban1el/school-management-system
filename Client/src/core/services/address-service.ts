@@ -19,10 +19,25 @@ export class AddressService {
   }
 
   getRegionsPaginated(params: DropDownParamsDTO | null) {
-    return this.http.post<PaginatedResult<DropdownItem>>(
-      `${this.baseUrl}/region/all/paginate`,
-      params,
+    return this.http.get<PaginatedResult<DropdownItem>>(`${this.baseUrl}/region/paginate`, {
+      params: {
+        search: params?.search ?? '',
+        pageNumber: params?.pageNumber ?? 1,
+        pageSize: params?.pageSize ?? 20,
+      },
+      context: new HttpContext().set(SkipLoading, true),
+    });
+  }
+
+  getProvincesPaginated(regionId: number, params: DropDownParamsDTO | null) {
+    return this.http.get<PaginatedResult<DropdownItem>>(
+      `${this.baseUrl}/province/${regionId}/paginate`,
       {
+        params: {
+          search: params?.search ?? '',
+          pageNumber: params?.pageNumber ?? 1,
+          pageSize: params?.pageSize ?? 20,
+        },
         withCredentials: true,
         context: new HttpContext().set(SkipLoading, true),
       },

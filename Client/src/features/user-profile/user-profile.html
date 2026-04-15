@@ -1,134 +1,138 @@
-<div class="m-25">
-  <div class="grid grid-cols-2 gap-3 mb-5">
-    <div class="flex flex-row gap-4 items-center">
-      <img
-        src="content/images/default-profile.png"
-        alt="Profile"
-        class="w-32 h-32 rounded-full object-cover"
-      />
-      <div>
-        <p>Daniel Troy Aromin</p>
-        <p>test@test.com</p>
-      </div>
-    </div>
-
-    <div class="flex justify-end">
-      <button class="btn btn-primary w-40">Edit</button>
-    </div>
-  </div>
-
-  <div>
-    <h1 class="text-lg font-bold">Personal Info</h1>
-  </div>
-
-  <div class="grid grid-cols-3 gap-2">
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">First Name</legend>
-      <input type="text" class="input w-full" placeholder="Enter first name" />
-    </fieldset>
-
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Middle Name</legend>
-      <input type="text" class="input w-full" placeholder="Enter last name" />
-    </fieldset>
-
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Last Name</legend>
-      <input type="text" class="input w-full" placeholder="Enter last name" />
-    </fieldset>
-  </div>
-
-  <div class="grid grid-cols-3 gap-2 mb-5">
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Mobile Number</legend>
-      <div class="flex items-center input w-full p-0 overflow-hidden">
-        <span
-          class="px-3 py-2 bg-base-200 text-base-content border-r border-base-300 h-full flex items-center"
-        >
-          +63
-        </span>
-        <input
-          type="tel"
-          class="flex-1 px-3 py-2 outline-none bg-transparent"
-          placeholder="9XX XXX XXXX"
+<form [formGroup]="form">
+  <div class="m-25">
+    <div class="grid grid-cols-2 gap-3 mb-5">
+      <div class="flex flex-row gap-4 items-center">
+        <img
+          src="content/images/default-profile.png"
+          alt="Profile"
+          class="w-32 h-32 rounded-full object-cover"
         />
+        <div>
+          <p>Daniel Troy Aromin</p>
+          <p>test@test.com</p>
+        </div>
       </div>
-    </fieldset>
 
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Email Address</legend>
-      <input type="text" class="input w-full" placeholder="Enter email address" />
-    </fieldset>
+      <div class="flex justify-end">
+        <button class="btn btn-primary w-40">Edit</button>
+      </div>
+    </div>
 
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Gender</legend>
-      <select class="select w-full">
-        <option selected="selected" value="0">Select Gender</option>
-        <!-- @for (dropdown of locationDropdown(); track $index) {
+    <div>
+      <h1 class="text-lg font-bold">Personal Info</h1>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">First Name</legend>
+        <input type="text" class="input w-full" placeholder="Enter first name" />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Middle Name</legend>
+        <input type="text" class="input w-full" placeholder="Enter last name" />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Last Name</legend>
+        <input type="text" class="input w-full" placeholder="Enter last name" />
+      </fieldset>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 mb-5">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Mobile Number</legend>
+        <div class="flex items-center input w-full p-0 overflow-hidden">
+          <span
+            class="px-3 py-2 bg-base-200 text-base-content border-r border-base-300 h-full flex items-center"
+          >
+            +63
+          </span>
+          <input
+            type="tel"
+            class="flex-1 px-3 py-2 outline-none bg-transparent"
+            placeholder="9XX XXX XXXX"
+          />
+        </div>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Email Address</legend>
+        <input type="text" class="input w-full" placeholder="Enter email address" />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Gender</legend>
+        <select class="select w-full">
+          <option selected="selected" value="0">Select Gender</option>
+          <!-- @for (dropdown of locationDropdown(); track $index) {
           <option [value]="dropdown.id">{{ dropdown.name }}</option>
         } -->
-      </select>
-    </fieldset>
+        </select>
+      </fieldset>
+    </div>
+
+    <hr class="border-sky-700 mb-5" />
+
+    <div>
+      <h1 class="text-lg font-bold">Address</h1>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2">
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Region</legend>
+        <app-dropdown-paginate
+          label="Select Region"
+          legendLabel="Region Name"
+          [items]="regionFilter.items()"
+          [loading]="regionFilter.loading()"
+          (searchChanged)="regionFilter.onSearch($event)"
+          (scrolledToBottom)="regionFilter.loadMore()"
+          (itemSelected)="onRegionSelected($event)"
+        />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Province</legend>
+        <app-dropdown-paginate
+          formControlName="province"
+          label="Select Province"
+          legendLabel="Region Name"
+          [items]="provinceFilter.items()"
+          [loading]="provinceFilter.loading()"
+          (searchChanged)="provinceFilter.onSearch($event)"
+          (scrolledToBottom)="provinceFilter.loadMore()"
+        />
+      </fieldset>
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">City</legend>
+        <select class="select w-full">
+          <option selected="selected" value="0">Select City</option>
+          <!-- @for (dropdown of locationDropdown(); track $index) {
+          <option [value]="dropdown.id">{{ dropdown.name }}</option>
+        } -->
+        </select>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Barangay</legend>
+        <select class="select w-full">
+          <option selected="selected" value="0">Select Barangay</option>
+          <!-- @for (dropdown of locationDropdown(); track $index) {
+          <option [value]="dropdown.id">{{ dropdown.name }}</option>
+        } -->
+        </select>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Zip code</legend>
+        <input type="text" class="input w-full" placeholder="Enter zip code" />
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Street Address</legend>
+        <input type="text" class="input w-full" placeholder="Enter street address" />
+      </fieldset>
+    </div>
   </div>
-
-  <hr class="border-sky-700 mb-5" />
-
-  <div>
-    <h1 class="text-lg font-bold">Address</h1>
-  </div>
-
-  <div class="grid grid-cols-3 gap-2">
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Region</legend>
-      <app-dropdown-paginate
-        label="Select Region"
-        legendLabel="Region Name"
-        [items]="regionFilter.items()"
-        [loading]="regionFilter.loading()"
-        (searchChanged)="regionFilter.onSearch($event)"
-        (scrolledToBottom)="regionFilter.loadMore()"
-        (itemSelected)="onRegionSelected($event)"
-      />
-    </fieldset>
-
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Province</legend>
-      <select class="select w-full">
-        <option selected="selected" value="0">Select Province</option>
-        <!-- @for (dropdown of locationDropdown(); track $index) {
-          <option [value]="dropdown.id">{{ dropdown.name }}</option>
-        } -->
-      </select>
-    </fieldset>
-
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">City</legend>
-      <select class="select w-full">
-        <option selected="selected" value="0">Select City</option>
-        <!-- @for (dropdown of locationDropdown(); track $index) {
-          <option [value]="dropdown.id">{{ dropdown.name }}</option>
-        } -->
-      </select>
-    </fieldset>
-
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Barangay</legend>
-      <select class="select w-full">
-        <option selected="selected" value="0">Select Barangay</option>
-        <!-- @for (dropdown of locationDropdown(); track $index) {
-          <option [value]="dropdown.id">{{ dropdown.name }}</option>
-        } -->
-      </select>
-    </fieldset>
-
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Zip code</legend>
-      <input type="text" class="input w-full" placeholder="Enter zip code" />
-    </fieldset>
-
-    <fieldset class="fieldset">
-      <legend class="fieldset-legend">Street Address</legend>
-      <input type="text" class="input w-full" placeholder="Enter street address" />
-    </fieldset>
-  </div>
-</div>
+</form>
