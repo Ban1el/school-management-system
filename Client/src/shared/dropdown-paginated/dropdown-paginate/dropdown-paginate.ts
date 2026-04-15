@@ -50,6 +50,7 @@ export class DropdownPaginate implements ControlValueAccessor, OnInit, OnDestroy
   isOpen = signal(false);
   isAbove = signal(false);
   isDisabled = signal(false);
+  hidden = input(false);
   searchControl = new FormControl('');
 
   private destroy$ = new Subject<void>();

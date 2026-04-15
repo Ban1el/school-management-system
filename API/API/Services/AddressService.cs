@@ -53,9 +53,9 @@ public class AddressService
     {
         return await _uow.Addresses.GetCitiesMunicipalitiesPaginatedAsync(search, pageNumber, pageSize, id, byRegion);
     }
-    public async Task<PaginatedResult<DropdownDto>> GetBarangaysPaginatedAsync(string? search, int pageNumber, int pageSize, int cityId)
+    public async Task<PaginatedResult<DropdownDto>> GetBarangaysPaginatedAsync(string? search, int pageNumber, int pageSize, int cityMunicipalityId)
     {
-        return await _uow.Addresses.GetBarangaysPaginatedAsync(search, pageNumber, pageSize, cityId);
+        return await _uow.Addresses.GetBarangaysPaginatedAsync(search, pageNumber, pageSize, cityMunicipalityId);
     }
 
 }

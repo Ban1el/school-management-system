@@ -92,7 +92,7 @@
         />
       </fieldset>
 
-      <fieldset class="fieldset">
+      <fieldset class="fieldset" [class.hidden]="provinceHidden()">
         <legend class="fieldset-legend">Province</legend>
         <app-dropdown-paginate
           formControlName="province"
@@ -102,26 +102,34 @@
           [loading]="provinceFilter.loading()"
           (searchChanged)="provinceFilter.onSearch($event)"
           (scrolledToBottom)="provinceFilter.loadMore()"
+          (itemSelected)="onProvinceSelected($event)"
         />
       </fieldset>
       <fieldset class="fieldset">
-        <legend class="fieldset-legend">City</legend>
-        <select class="select w-full">
-          <option selected="selected" value="0">Select City</option>
-          <!-- @for (dropdown of locationDropdown(); track $index) {
-          <option [value]="dropdown.id">{{ dropdown.name }}</option>
-        } -->
-        </select>
+        <legend class="fieldset-legend">City / Municipality</legend>
+        <app-dropdown-paginate
+          formControlName="cityMunicipality"
+          label="Select City Municipality"
+          legendLabel="City / Municipality Name"
+          [items]="cityMunicipalityFilter.items()"
+          [loading]="cityMunicipalityFilter.loading()"
+          (searchChanged)="cityMunicipalityFilter.onSearch($event)"
+          (scrolledToBottom)="cityMunicipalityFilter.loadMore()"
+          (itemSelected)="onCityMunicipalitySelected($event)"
+        />
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Barangay</legend>
-        <select class="select w-full">
-          <option selected="selected" value="0">Select Barangay</option>
-          <!-- @for (dropdown of locationDropdown(); track $index) {
-          <option [value]="dropdown.id">{{ dropdown.name }}</option>
-        } -->
-        </select>
+        <app-dropdown-paginate
+          formControlName="barangay"
+          label="Select Barangay"
+          legendLabel="Barangay Name"
+          [items]="barangayFilter.items()"
+          [loading]="barangayFilter.loading()"
+          (searchChanged)="barangayFilter.onSearch($event)"
+          (scrolledToBottom)="barangayFilter.loadMore()"
+        />
       </fieldset>
 
       <fieldset class="fieldset">

@@ -43,4 +43,35 @@ export class AddressService {
       },
     );
   }
+
+  getCitiesMunicipalitiesPaginated(id: number, params: DropDownParamsDTO | null, byRegion = false) {
+    return this.http.get<PaginatedResult<DropdownItem>>(
+      `${this.baseUrl}/city-municipality/${id}/paginate`,
+      {
+        params: {
+          search: params?.search ?? '',
+          pageNumber: params?.pageNumber ?? 1,
+          pageSize: params?.pageSize ?? 20,
+          byRegion: byRegion,
+        },
+        withCredentials: true,
+        context: new HttpContext().set(SkipLoading, true),
+      },
+    );
+  }
+
+  getBarangayPaginated(cityMunicipalityId: number, params: DropDownParamsDTO | null) {
+    return this.http.get<PaginatedResult<DropdownItem>>(
+      `${this.baseUrl}/barangay/${cityMunicipalityId}/paginate`,
+      {
+        params: {
+          search: params?.search ?? '',
+          pageNumber: params?.pageNumber ?? 1,
+          pageSize: params?.pageSize ?? 20,
+        },
+        withCredentials: true,
+        context: new HttpContext().set(SkipLoading, true),
+      },
+    );
+  }
 }

@@ -78,11 +78,11 @@ namespace API.Controllers
             return await _addressService.GetCitiesMunicipalitiesPaginatedAsync(paramsDto.search, paramsDto.pageNumber, paramsDto.pageSize, id, byRegion);
         }
 
-        [HttpGet("barangay/{cityId}/paginate")]
+        [HttpGet("barangay/{cityMunicipalityId}/paginate")]
         [AuditTrail(IsIgnore = true)]
-        public async Task<ActionResult<PaginatedResult<DropdownDto>>> GetBarangaysPaginated(int cityId, [FromQuery] DropdownParamsDto paramsDto)
+        public async Task<ActionResult<PaginatedResult<DropdownDto>>> GetBarangaysPaginated(int cityMunicipalityId, [FromQuery] DropdownParamsDto paramsDto)
         {
-            return await _addressService.GetBarangaysPaginatedAsync(paramsDto.search, paramsDto.pageNumber, paramsDto.pageSize, cityId);
+            return await _addressService.GetBarangaysPaginatedAsync(paramsDto.search, paramsDto.pageNumber, paramsDto.pageSize, cityMunicipalityId);
         }
     }
 }

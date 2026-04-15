@@ -162,10 +162,10 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
         return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
     }
 
-    public async Task<PaginatedResult<DropdownDto>> GetBarangaysPaginatedAsync(string? search, int pageNumber, int pageSize, int cityId)
+    public async Task<PaginatedResult<DropdownDto>> GetBarangaysPaginatedAsync(string? search, int pageNumber, int pageSize, int cityMunicipalityId)
     {
         var query = _context.Barangays
-            .Where(r => r.IsActive && r.CityId == cityId);
+            .Where(r => r.IsActive && r.CityId == cityMunicipalityId);
 
         if (!string.IsNullOrWhiteSpace(search))
             query = query.Where(r => r.Name.Contains(search));
