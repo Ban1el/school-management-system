@@ -137,11 +137,7 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
 
     public async Task<PaginatedResult<DropdownDto>> GetCitiesMunicipalitiesPaginatedAsync(string? search, int pageNumber, int pageSize, int id, bool byRegion = false)
     {
-        var query = byRegion ?
-                     _context.CitiesMunicipalities
-                     .Where(r => r.IsActive && r.RegionId == id) :
-                     _context.CitiesMunicipalities
-                     .Where(r => r.IsActive && r.ProvinceId == id);
+        var query = _context.CitiesMunicipalities.Where(r => r.IsActive && (byRegion ? r.RegionId == id : r.ProvinceId == id));
 
         if (!string.IsNullOrWhiteSpace(search))
             query = query.Where(r => r.Name.Contains(search));

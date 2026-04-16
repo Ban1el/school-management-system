@@ -126,5 +126,12 @@ export class DropdownPaginate implements ControlValueAccessor, OnInit, OnDestroy
 
   setDisabledState(isDisabled: boolean) {
     this.isDisabled.set(isDisabled);
+
+    if (isDisabled) {
+      this.searchControl.disable();
+      this.isOpen.set(false);
+    } else {
+      this.searchControl.enable();
+    }
   }
 }

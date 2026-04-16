@@ -31,6 +31,7 @@ export class DropdownCityMunicipalityFilter {
 
     //NCR = 4
     if (this.id == 4) this.isNcr = true;
+    else this.isNcr = false;
 
     this.loading.set(true);
     this.addressService

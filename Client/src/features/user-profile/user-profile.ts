@@ -50,6 +50,7 @@ export class UserProfile implements OnInit {
         this.form.get('cityMunicipality')?.enable();
         this.form.get('barangay')?.disable();
       } else {
+        this.provinceHidden.set(false);
         this.provinceFilter.setRegionId(item.id);
         this.provinceFilter.init();
         this.form.get('province')?.enable();
@@ -61,8 +62,9 @@ export class UserProfile implements OnInit {
       this.form.get('province')?.disable();
       this.form.get('cityMunicipality')?.disable();
       this.form.get('barangay')?.disable();
-      this.form.patchValue({ province: null, cityMunicipality: null, barangay: null });
     }
+
+    this.form.patchValue({ province: null, cityMunicipality: null, barangay: null });
   }
 
   onProvinceSelected(item: DropdownItem | null) {
@@ -75,8 +77,9 @@ export class UserProfile implements OnInit {
     } else {
       this.form.get('cityMunicipality')?.disable();
       this.form.get('barangay')?.disable();
-      this.form.patchValue({ cityMunicipality: null, barangay: null });
     }
+
+    this.form.patchValue({ cityMunicipality: null, barangay: null });
   }
 
   onCityMunicipalitySelected(item: DropdownItem | null) {
@@ -86,7 +89,7 @@ export class UserProfile implements OnInit {
       this.form.get('barangay')?.enable();
     } else {
       this.form.get('barangay')?.disable();
-      this.form.patchValue({ barangay: null });
     }
+    this.form.patchValue({ barangay: null });
   }
 }

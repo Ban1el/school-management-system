@@ -42,7 +42,7 @@ public class AddressSeedData
 
         var response = await _httpClient.GetAsync("regions");
         var json = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<List<string>>(json);
+        var result = JsonSerializer.Deserialize<List<string>>(json)?.Distinct().ToList();
 
         if (result is null) return;
 
@@ -83,7 +83,7 @@ public class AddressSeedData
         {
             var response = await _httpClient.GetAsync($"{region.Name}/provinces_and_highly_urbanized_cities");
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<List<string>>(json);
+            var result = JsonSerializer.Deserialize<List<string>>(json)?.Distinct().ToList();
 
             if (result is null) continue;
 
@@ -101,7 +101,6 @@ public class AddressSeedData
                 }).ToList();
 
                 await context.CitiesMunicipalities.AddRangeAsync(citiesMunicipalities);
-
             }
             else
             {
@@ -152,7 +151,7 @@ public class AddressSeedData
         {
             var response = await _httpClient.GetAsync($"{province.RegionName}/{province.Name}/municipalities_and_cities");
             var json = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<List<string>>(json);
+            var result = JsonSerializer.Deserialize<List<string>>(json)?.Distinct().ToList();
 
             if (result is null || province.RegionName == "National Capital Region (NCR)") continue;
 
@@ -243,7 +242,7 @@ public class AddressSeedData
                     }
 
                     var json = await response.Content.ReadAsStringAsync();
-                    var result = JsonSerializer.Deserialize<List<string>>(json);
+                    var result = JsonSerializer.Deserialize<List<string>>(json)?.Distinct().ToList();
 
                     if (result is null) continue;
 
@@ -276,7 +275,7 @@ public class AddressSeedData
                 }
 
                 var json = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<List<string>>(json);
+                var result = JsonSerializer.Deserialize<List<string>>(json)?.Distinct().ToList();
 
                 if (result is null) continue;
 
