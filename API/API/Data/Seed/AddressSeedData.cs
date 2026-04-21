@@ -127,7 +127,7 @@ public class AddressSeedData
     // -------------------------------------------------------
     private static async Task SeedCitiesAsync(AppDbContext context)
     {
-        if (context.CitiesMunicipalities.Any(c => c.RegionId != null && c.ProvinceId != null))
+        if (context.CitiesMunicipalities.Any(c => c.ProvinceId != null))
         {
             Console.WriteLine("Cities already seeded, skipping...");
             return;

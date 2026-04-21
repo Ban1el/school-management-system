@@ -17,6 +17,7 @@ namespace API.Data
             public DbSet<Province> Provinces { get; set; }
             public DbSet<CityMunicipality> CitiesMunicipalities { get; set; }
             public DbSet<Barangay> Barangays { get; set; }
+            public DbSet<Gender> Genders { get; set; }
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                   modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);

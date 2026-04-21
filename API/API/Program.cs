@@ -13,6 +13,7 @@ using (var scope = app.Services.CreateScope())
 {
     UserSeedData.Initialize(scope.ServiceProvider);
     await AddressSeedData.InitializeAsync(scope.ServiceProvider);
+    await GenderSeedData.InitializeAsync(scope.ServiceProvider);
 }
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:4200"));
