@@ -15,6 +15,7 @@ public class UnitOfWork : IUnitOfWork
     public IErrorLogRepository ErrorLogs { get; }
     public IAuditTrailRepository AuditTrails { get; }
     public IAddressRepository Addresses { get; }
+    public IGenderRepository Genders { get; }
 
     public UnitOfWork(AppDbContext context)
     {
@@ -24,6 +25,7 @@ public class UnitOfWork : IUnitOfWork
         ErrorLogs = new ErrorLogRepository(context);
         AuditTrails = new AuditTrailRepository(context);
         Addresses = new AddressRepository(context);
+        Genders = new GenderRepository(context);
     }
 
     public async Task<int> SaveChangesAsync() =>

@@ -9,6 +9,7 @@ public interface IUnitOfWork : IDisposable
     IErrorLogRepository ErrorLogs { get; }
     IAuditTrailRepository AuditTrails { get; }
     IAddressRepository Addresses { get; }
+    IGenderRepository Genders { get; }
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();
     Task CommitAsync();
