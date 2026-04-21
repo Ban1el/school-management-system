@@ -18,7 +18,7 @@ namespace API.Controllers
             _genderService = genderService;
         }
 
-        [HttpGet("gender/all/active")]
+        [HttpGet("all/active")]
         [AuditTrail(IsIgnore = true)]
         public async Task<ActionResult<List<GenderDto>>> GetGendersActive()
         {

@@ -7,6 +7,8 @@ import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DropdownProvinceFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-province-filter';
 import { DropdownCityMunicipalityFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-city-municipality-filter';
 import { DropdownBarangayFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-barangay-filter';
+import { GenderService } from '../../core/services/gender-service';
+import { GenderDto } from '../../types/Gender/GenderDto';
 
 @Component({
   selector: 'app-user-profile',
@@ -25,10 +27,19 @@ export class UserProfile implements OnInit {
   provinceFilter = inject(DropdownProvinceFilter);
   cityMunicipalityFilter = inject(DropdownCityMunicipalityFilter);
   barangayFilter = inject(DropdownBarangayFilter);
+  genderService = inject(GenderService);
 
+  protected genders = signal<GenderDto[]>([]);
   provinceHidden = signal(false);
 
   ngOnInit(): void {
+    this.genderService.getGendersActive().subscribe({
+      next: (result) => {
+        this.genders.set(result);
+      },
+      error: (err) => {},
+      complete: () => {},
+    });
     this.regionFilter.init();
   }
 

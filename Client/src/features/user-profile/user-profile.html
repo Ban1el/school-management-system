@@ -65,9 +65,9 @@
         <legend class="fieldset-legend">Gender</legend>
         <select class="select w-full">
           <option selected="selected" value="0">Select Gender</option>
-          <!-- @for (dropdown of locationDropdown(); track $index) {
-          <option [value]="dropdown.id">{{ dropdown.name }}</option>
-        } -->
+          @for (dropdown of genders(); track $index) {
+            <option [value]="dropdown.id">{{ dropdown.name }}</option>
+          }
         </select>
       </fieldset>
     </div>
