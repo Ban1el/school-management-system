@@ -1,4 +1,5 @@
 using System;
+using API.Models.Address;
 
 namespace API.Models;
 
@@ -19,5 +20,11 @@ public class User : BaseEntity
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string PasswordSalt { get; set; } = string.Empty;
+    public string? ZipCode { get; set; } = string.Empty;
 
+    public Role Role { get; set; } = null!;
+    public Region? Region { get; set; }
+    public Province? Province { get; set; }
+    public CityMunicipality? CityMunicipality { get; set; }
+    public Barangay? Barangay { get; set; }
 }

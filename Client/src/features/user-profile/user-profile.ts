@@ -9,10 +9,11 @@ import { DropdownCityMunicipalityFilter } from '../../shared/dropdown-paginated/
 import { DropdownBarangayFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-barangay-filter';
 import { GenderService } from '../../core/services/gender-service';
 import { GenderDto } from '../../types/Gender/GenderDto';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [DropdownPaginate, ReactiveFormsModule],
+  imports: [DropdownPaginate, ReactiveFormsModule, NgClass],
   providers: [
     DropdownRegionFilter,
     DropdownProvinceFilter,
@@ -28,6 +29,8 @@ export class UserProfile implements OnInit {
   cityMunicipalityFilter = inject(DropdownCityMunicipalityFilter);
   barangayFilter = inject(DropdownBarangayFilter);
   genderService = inject(GenderService);
+
+  protected isEdit = signal(false);
 
   protected genders = signal<GenderDto[]>([]);
   provinceHidden = signal(false);

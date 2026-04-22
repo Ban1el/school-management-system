@@ -38,36 +38,36 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
      .IsRequired(false);
           entity.Property(u => u.IsActive)
      .HasDefaultValue(true);
+          entity.Property(u => u.ZipCode).IsRequired(false).HasMaxLength(4);
 
-          entity.HasOne<Role>()
-     .WithMany()
-     .HasForeignKey(u => u.RoleId)
-     .OnDelete(DeleteBehavior.Restrict);
+          entity.HasOne(u => u.Role)
+          .WithMany()
+          .HasForeignKey(u => u.RoleId)
+          .OnDelete(DeleteBehavior.Restrict);
 
-          entity.HasOne<Region>()
-     .WithMany()
-     .HasForeignKey(u => u.RegionId)
-     .IsRequired(false)
-     .OnDelete(DeleteBehavior.Restrict);
+          entity.HasOne(u => u.Region)
+              .WithMany()
+              .HasForeignKey(u => u.RegionId)
+              .IsRequired(false)
+              .OnDelete(DeleteBehavior.Restrict);
 
-          entity.HasOne<Province>()
-      .WithMany()
-      .HasForeignKey(u => u.ProvinceId)
-      .IsRequired(false)
-      .OnDelete(DeleteBehavior.Restrict);
+          entity.HasOne(u => u.Province)
+              .WithMany()
+              .HasForeignKey(u => u.ProvinceId)
+              .IsRequired(false)
+              .OnDelete(DeleteBehavior.Restrict);
 
-          entity.HasOne<CityMunicipality>()
-     .WithMany()
-     .HasForeignKey(u => u.CityMunicipalityId)
-     .IsRequired(false)
-     .OnDelete(DeleteBehavior.Restrict);
+          entity.HasOne(u => u.CityMunicipality)
+              .WithMany()
+              .HasForeignKey(u => u.CityMunicipalityId)
+              .IsRequired(false)
+              .OnDelete(DeleteBehavior.Restrict);
 
-
-          entity.HasOne<Barangay>()
-     .WithMany()
-     .HasForeignKey(u => u.BarangayId)
-     .IsRequired(false)
-     .OnDelete(DeleteBehavior.Restrict);
+          entity.HasOne(u => u.Barangay)
+              .WithMany()
+              .HasForeignKey(u => u.BarangayId)
+              .IsRequired(false)
+              .OnDelete(DeleteBehavior.Restrict);
 
           entity.HasIndex(u => new { u.Email, u.Username })
      .IsUnique();

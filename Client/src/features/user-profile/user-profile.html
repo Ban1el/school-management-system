@@ -1,41 +1,68 @@
-<form [formGroup]="form">
-  <div class="m-25">
-    <div class="grid grid-cols-2 gap-3 mb-5">
-      <div class="flex flex-row gap-4 items-center">
-        <img
-          src="content/images/default-profile.png"
-          alt="Profile"
-          class="w-32 h-32 rounded-full object-cover"
-        />
-        <div>
-          <p>Daniel Troy Aromin</p>
-          <p>test@test.com</p>
-        </div>
-      </div>
-
-      <div class="flex justify-end">
-        <button class="btn btn-primary w-40">Edit</button>
+<div class="m-25">
+  <div class="grid grid-cols-2 gap-3 mb-5">
+    <div class="flex flex-row gap-4 items-center">
+      <img
+        src="content/images/default-profile.png"
+        alt="Profile"
+        class="w-32 h-32 rounded-full object-cover"
+      />
+      <div>
+        <p>Daniel Troy Aromin</p>
+        <p>test@test.com</p>
       </div>
     </div>
 
-    <div>
-      <h1 class="text-lg font-bold">Personal Info</h1>
+    <div class="flex justify-end">
+      <button
+        class="btn w-40"
+        [class]="isEdit() ? 'btn-error' : 'btn-primary'"
+        (click)="isEdit.set(!isEdit())"
+      >
+        {{ isEdit() ? 'Cancel' : 'Edit' }}
+      </button>
     </div>
+  </div>
 
+  <div>
+    <h1 class="text-lg font-bold">Personal Info</h1>
+  </div>
+
+  <form [formGroup]="form">
     <div class="grid grid-cols-3 gap-2">
       <fieldset class="fieldset">
         <legend class="fieldset-legend">First Name</legend>
-        <input type="text" class="input w-full" placeholder="Enter first name" />
+        <input
+          type="text"
+          class="input w-full"
+          placeholder="Enter first name"
+          [attr.readonly]="!isEdit() ? true : null"
+          [ngClass]="{ 'focus:outline-none': !isEdit() }"
+          formControlName="firstName"
+        />
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Middle Name</legend>
-        <input type="text" class="input w-full" placeholder="Enter last name" />
+        <input
+          type="text"
+          class="input w-full"
+          placeholder="Enter last name"
+          [attr.readonly]="!isEdit() ? true : null"
+          [ngClass]="{ 'focus:outline-none': !isEdit() }"
+          formControlName="middleName"
+        />
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Last Name</legend>
-        <input type="text" class="input w-full" placeholder="Enter last name" />
+        <input
+          type="text"
+          class="input w-full"
+          placeholder="Enter last name"
+          [attr.readonly]="!isEdit() ? true : null"
+          [ngClass]="{ 'focus:outline-none': !isEdit() }"
+          formControlName="lastName"
+        />
       </fieldset>
     </div>
 
@@ -142,5 +169,5 @@
         <input type="text" class="input w-full" placeholder="Enter street address" />
       </fieldset>
     </div>
-  </div>
-</form>
+  </form>
+</div>

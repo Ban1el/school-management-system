@@ -16,6 +16,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<AuditTrailService>();
         services.AddScoped<AddressService>();
         services.AddScoped<GenderService>();
+        services.AddScoped<UserService>();
         services.AddDbContext<AppDbContext>(options =>
                options.UseSqlServer(config.GetConnectionString("SMSDatabase")));
         string base64Key = config["Encryption:Key"]
