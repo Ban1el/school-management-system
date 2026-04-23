@@ -1,3 +1,22 @@
 export type UserDto = {
+  id: number;
+  roleName: string;
+  roleId: number;
   username: string;
+  email: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  mobileNumber?: string;
+  barangayName?: string;
+  barangayId?: number;
+  cityMunicipalityName?: string;
+  cityMunicipalityId?: number;
+  provinceName?: string;
+  provinceId?: number;
+  regionName?: string;
+  regionId?: number;
+  streetAddress?: string;
+  zipCode?: string;
+  isActive: boolean;
 };

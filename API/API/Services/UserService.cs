@@ -1,5 +1,6 @@
 using System;
 using API.Data;
+using API.DTOs.User;
 using API.DTOs.Users;
 using API.Repositories.Interfaces;
 
@@ -19,6 +20,11 @@ public class UserService
     public async Task<UserDto?> GetUserByIdAsync(int id)
     {
         return await _uow.Users.GetByIdAsync(id);
+    }
+
+    public async Task<UserIdentityDto?> GetUserIdentity(int id)
+    {
+        return await _uow.Users.GetUserIdentityAsync(id);
     }
 
 }

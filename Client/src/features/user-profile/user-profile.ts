@@ -3,13 +3,16 @@ import { AddressService } from '../../core/services/address-service';
 import { DropdownRegionFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-region-filter';
 import { DropdownItem } from '../../types/Dropdown/DropdownItemDto';
 import { DropdownPaginate } from '../../shared/dropdown-paginated/dropdown-paginate/dropdown-paginate';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { DropdownProvinceFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-province-filter';
 import { DropdownCityMunicipalityFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-city-municipality-filter';
 import { DropdownBarangayFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-barangay-filter';
 import { GenderService } from '../../core/services/gender-service';
 import { GenderDto } from '../../types/Gender/GenderDto';
 import { NgClass } from '@angular/common';
+import { UserService } from '../../core/services/user-service';
+import { UserDto } from '../../types/User/UserDto';
+import { UserAuthService } from '../../core/services/user-auth-service';
 
 @Component({
   selector: 'app-user-profile',
@@ -24,6 +27,8 @@ import { NgClass } from '@angular/common';
   styleUrl: './user-profile.css',
 })
 export class UserProfile implements OnInit {
+  userAuthService = inject(UserAuthService);
+  userService = inject(UserService);
   regionFilter = inject(DropdownRegionFilter);
   provinceFilter = inject(DropdownProvinceFilter);
   cityMunicipalityFilter = inject(DropdownCityMunicipalityFilter);
@@ -31,26 +36,43 @@ export class UserProfile implements OnInit {
   genderService = inject(GenderService);
 
   protected isEdit = signal(false);
-
   protected genders = signal<GenderDto[]>([]);
+  protected user = signal<UserDto | null>(null);
+  protected userId = this.userAuthService.user()?.id ?? 0;
   provinceHidden = signal(false);
+
+  private fb = inject(FormBuilder);
 
   ngOnInit(): void {
     this.genderService.getGendersActive().subscribe({
       next: (result) => {
         this.genders.set(result);
       },
-      error: (err) => {},
-      complete: () => {},
     });
+
+    this.userService.getUser(this.userId).subscribe({
+      next: (result) => {
+        this.user.set(result);
+        console.log(this.user());
+      },
+    });
+
     this.regionFilter.init();
   }
 
-  form = new FormGroup({
-    region: new FormControl(null),
-    province: new FormControl({ value: null, disabled: true }),
-    cityMunicipality: new FormControl({ value: null, disabled: true }),
-    barangay: new FormControl({ value: null, disabled: true }),
+  form = this.fb.group({
+    firstName: [''],
+    middleName: [''],
+    lastName: [''],
+    mobileNumber: [''],
+    email: [''],
+    gender: [0],
+    region: [null],
+    province: [{ value: null, disabled: true }],
+    cityMunicipality: [{ value: null, disabled: true }],
+    barangay: [{ value: null, disabled: true }],
+    zipCode: [''],
+    streetAddress: [''],
   });
 
   onRegionSelected(item: DropdownItem | null) {

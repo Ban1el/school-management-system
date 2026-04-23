@@ -1,5 +1,6 @@
 using API.Attributes;
 using API.Constants;
+using API.DTOs.User;
 using API.DTOs.Users;
 using API.Extensions;
 using API.Services;
@@ -14,12 +15,14 @@ namespace API.Controllers
     {
         private readonly IConfiguration _config;
         private readonly UserAuthService _userAuthService;
+        private readonly UserService _userService;
         private readonly TokenService _tokenService;
-        public UserAuthController(UserAuthService userAuthService, IConfiguration config, TokenService tokenService)
+        public UserAuthController(UserAuthService userAuthService, IConfiguration config, TokenService tokenService, UserService userService)
         {
             _userAuthService = userAuthService;
             _config = config;
             _tokenService = tokenService;
+            _userService = userService;
         }
 
         [HttpPost("signin")]
@@ -36,7 +39,9 @@ namespace API.Controllers
             await SetRefreshTokenCookie(result.Data!.refreshtoken);
             await SetAccessTokenCookie(result.Data!.accesstoken);
 
-            return Ok();
+            var userIdentity = await _userService.GetUserIdentity(result.Data.userId);
+
+            return Ok(userIdentity);
         }
 
         [HttpPost("logout")]
@@ -84,7 +89,11 @@ namespace API.Controllers
         [HttpGet("verify")]
         [Authorize]
         [AuditTrail(IsIgnore = true)]
-        public IActionResult Verify() => Ok();
+        public async Task<ActionResult<UserIdentityDto>> Verify()
+        {
+            var userIdentity = await _userService.GetUserIdentity(User.GetUserId());
+            return Ok(userIdentity);
+        }
 
         private async Task SetRefreshTokenCookie(string refreshToken)
         {

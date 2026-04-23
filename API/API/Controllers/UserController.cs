@@ -23,9 +23,7 @@ namespace API.Controllers
         [AuditTrail(IsIgnore = true)]
         public async Task<ActionResult<UserDto?>> GetById(int id)
         {
-            var user = await _userService.GetUserByIdAsync(id);
-
-            return user;
+            return await _userService.GetUserByIdAsync(id);
         }
     }
 }

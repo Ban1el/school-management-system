@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using API.Data;
 using API.DTOs.Users;
 using API.Repositories.Interfaces;
+using API.DTOs.User;
 
 namespace API.Repositories;
 
@@ -59,4 +60,14 @@ public class UserRepository(AppDbContext _context) : IUserRepository
              .FirstOrDefaultAsync();
     }
 
+    public async Task<UserIdentityDto?> GetUserIdentityAsync(int userId)
+    {
+        return await _context.Users
+           .Select(u => new UserIdentityDto
+           {
+               Id = u.Id,
+               Username = u.Username
+           })
+           .FirstOrDefaultAsync();
+    }
 }

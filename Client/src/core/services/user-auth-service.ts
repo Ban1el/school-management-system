@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment.development';
 import { UserSigninDto } from '../../types/User/UserSigninDto';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { SkipLoading } from '../interceptors/loading-interceptor';
+import { UserIdentityDto } from '../../types/User/UserIdentityDto';
 
 @Injectable({
   providedIn: 'root',
@@ -14,18 +15,27 @@ export class UserAuthService {
   private baseUrl = environment.apiUrl;
   private _isAuthenticated = signal(false);
   isAuthenticated = computed(() => this._isAuthenticated());
+  user = signal<UserIdentityDto | null>(null);
 
   login(dto: UserSigninDto) {
     return this.http
-      .post<UserDto>(this.baseUrl + 'user/auth/signin', dto, {
+      .post<UserIdentityDto>(this.baseUrl + 'user/auth/signin', dto, {
         withCredentials: true,
       })
-      .pipe(tap(() => this._isAuthenticated.set(true)));
+      .pipe(
+        tap((user) => {
+          this.user.set(user);
+          this._isAuthenticated.set(true);
+        }),
+      );
   }
 
   verifySession(): Observable<boolean> {
-    return this.http.get(this.baseUrl + 'user/auth/verify').pipe(
-      tap(() => this._isAuthenticated.set(true)),
+    return this.http.get<UserIdentityDto>(this.baseUrl + 'user/auth/verify').pipe(
+      tap((user) => {
+        this.user.set(user);
+        this._isAuthenticated.set(true);
+      }),
       map(() => true),
       catchError(() => of(false)),
     );

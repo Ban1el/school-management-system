@@ -38,6 +38,7 @@ public class UserAuthService
 
         var signInResponse = new SignInResponseDto
         {
+            userId = user.Id,
             accesstoken = _tokenService.CreateToken(user),
             refreshtoken = await _tokenService.SetRefreshToken(user.Id),
         };
