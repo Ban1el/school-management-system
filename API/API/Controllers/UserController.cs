@@ -1,8 +1,9 @@
 using API.Attributes;
+using API.Constants;
+using API.DTOs.User;
 using API.DTOs.Users;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -24,6 +25,15 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto?>> GetById(int id)
         {
             return await _userService.GetUserByIdAsync(id);
+        }
+
+        [HttpPut("profile/{id}")]
+        [AuditTrail(Module = ModuleConstants.User, Action = ActionConstants.Update)]
+        public async Task<ActionResult<UserDto?>> UpdateProfile(int id, [FromBody] UserProfileUpdateDto dto)
+        {
+            var result = await _userService.UpdateUserProfileAsync(id, dto);
+            HttpContext.Items[AuditTrailConstants.ReferenceId] = result?.Id;
+            return result;
         }
     }
 }

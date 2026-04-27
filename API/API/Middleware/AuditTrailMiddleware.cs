@@ -52,7 +52,7 @@ public class AuditTrailMiddleware
 
         await _next(context); // controller executes here
 
-        // ✅ read attribute AFTER _next
+        // read attribute AFTER _next
         var endpoint = context.GetEndpoint();
         var auditAttr = endpoint?.Metadata.GetMetadata<AuditTrailAttribute>();
         var module = auditAttr?.Module ?? "Unknown";

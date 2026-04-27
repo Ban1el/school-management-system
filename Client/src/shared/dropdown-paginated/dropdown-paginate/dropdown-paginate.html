@@ -12,7 +12,10 @@
     class="input justify-start w-full cursor-pointer"
     (click)="toggleDropdown($event)"
   >
-    <span class="material-symbols-outlined">search</span>
+    @if (!isDisabled()) {
+      <span class="material-symbols-outlined">search</span>
+    }
+
     {{ selectedItem?.name || label() }}
   </div>
 

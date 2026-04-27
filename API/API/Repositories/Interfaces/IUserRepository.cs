@@ -9,4 +9,5 @@ public interface IUserRepository
     Task<UserDto?> GetByUsernameAsync(string username);
     Task<UserDto?> GetByIdAsync(int userId);
     Task<UserIdentityDto?> GetUserIdentityAsync(int userId);
+    Task<UserDto?> UpdateUserProfileAsync(int userId, UserProfileUpdateDto dto);
 }

@@ -58,6 +58,19 @@ export class UserProfile implements OnInit {
     });
 
     this.regionFilter.init();
+    this.form.disable();
+    this.setForm();
+  }
+
+  toggleEdit() {
+    this.isEdit.set(!this.isEdit());
+
+    if (this.isEdit()) {
+      this.form.enable();
+    } else {
+      this.setForm();
+      this.form.disable();
+    }
   }
 
   form = this.fb.group({
@@ -67,13 +80,34 @@ export class UserProfile implements OnInit {
     mobileNumber: [''],
     email: [''],
     gender: [0],
-    region: [null],
-    province: [{ value: null, disabled: true }],
-    cityMunicipality: [{ value: null, disabled: true }],
-    barangay: [{ value: null, disabled: true }],
+    region: [null as DropdownItem | null],
+    province: [{ value: null as DropdownItem | null, disabled: true }],
+    cityMunicipality: [{ value: null as DropdownItem | null, disabled: true }],
+    barangay: [{ value: null as DropdownItem | null, disabled: true }],
     zipCode: [''],
     streetAddress: [''],
   });
+
+  setForm() {
+    const user = this.user();
+    if (user) {
+      this.form.patchValue({
+        firstName: user.firstName ?? '',
+        middleName: user.middleName ?? '',
+        lastName: user.lastName ?? '',
+        mobileNumber: user.mobileNumber ?? '',
+        email: user.email ?? '',
+        region: user.regionId ? { id: user.regionId, name: user.regionName ?? '' } : null,
+        province: user.provinceId ? { id: user.provinceId, name: user.provinceName ?? '' } : null,
+        cityMunicipality: user.cityMunicipalityId
+          ? { id: user.cityMunicipalityId, name: user.cityMunicipalityName ?? '' }
+          : null,
+        barangay: user.barangayId ? { id: user.barangayId, name: user.barangayName ?? '' } : null,
+        zipCode: user.zipCode ?? '',
+        streetAddress: user.streetAddress ?? '',
+      });
+    }
+  }
 
   onRegionSelected(item: DropdownItem | null) {
     if (item && item.id !== 0) {

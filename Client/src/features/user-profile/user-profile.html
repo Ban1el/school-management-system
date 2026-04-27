@@ -16,7 +16,7 @@
       <button
         class="btn w-40"
         [class]="isEdit() ? 'btn-error' : 'btn-primary'"
-        (click)="isEdit.set(!isEdit())"
+        (click)="toggleEdit()"
       >
         {{ isEdit() ? 'Cancel' : 'Edit' }}
       </button>
@@ -35,8 +35,6 @@
           type="text"
           class="input w-full"
           placeholder="Enter first name"
-          [attr.readonly]="!isEdit() ? true : null"
-          [ngClass]="{ 'focus:outline-none': !isEdit() }"
           formControlName="firstName"
         />
       </fieldset>
@@ -47,8 +45,6 @@
           type="text"
           class="input w-full"
           placeholder="Enter last name"
-          [attr.readonly]="!isEdit() ? true : null"
-          [ngClass]="{ 'focus:outline-none': !isEdit() }"
           formControlName="middleName"
         />
       </fieldset>
@@ -59,8 +55,6 @@
           type="text"
           class="input w-full"
           placeholder="Enter last name"
-          [attr.readonly]="!isEdit() ? true : null"
-          [ngClass]="{ 'focus:outline-none': !isEdit() }"
           formControlName="lastName"
         />
       </fieldset>
@@ -79,18 +73,25 @@
             type="tel"
             class="flex-1 px-3 py-2 outline-none bg-transparent"
             placeholder="9XX XXX XXXX"
+            formControlName="mobileNumber"
           />
         </div>
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Email Address</legend>
-        <input type="text" class="input w-full" placeholder="Enter email address" />
+        <input
+          type="text"
+          class="input w-full"
+          placeholder="Enter email address"
+          formControlName="email"
+        />
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Gender</legend>
-        <select class="select w-full">
+
+        <select class="select w-full" formControlName="gender">
           <option selected="selected" value="0">Select Gender</option>
           @for (dropdown of genders(); track $index) {
             <option [value]="dropdown.id">{{ dropdown.name }}</option>
@@ -116,13 +117,13 @@
           (searchChanged)="regionFilter.onSearch($event)"
           (scrolledToBottom)="regionFilter.loadMore()"
           (itemSelected)="onRegionSelected($event)"
+          formControlName="region"
         />
       </fieldset>
 
       <fieldset class="fieldset" [class.hidden]="provinceHidden()">
         <legend class="fieldset-legend">Province</legend>
         <app-dropdown-paginate
-          formControlName="province"
           label="Select Province"
           legendLabel="Region Name"
           [items]="provinceFilter.items()"
@@ -130,12 +131,12 @@
           (searchChanged)="provinceFilter.onSearch($event)"
           (scrolledToBottom)="provinceFilter.loadMore()"
           (itemSelected)="onProvinceSelected($event)"
+          formControlName="province"
         />
       </fieldset>
       <fieldset class="fieldset">
         <legend class="fieldset-legend">City / Municipality</legend>
         <app-dropdown-paginate
-          formControlName="cityMunicipality"
           label="Select City Municipality"
           legendLabel="City / Municipality Name"
           [items]="cityMunicipalityFilter.items()"
@@ -143,6 +144,7 @@
           (searchChanged)="cityMunicipalityFilter.onSearch($event)"
           (scrolledToBottom)="cityMunicipalityFilter.loadMore()"
           (itemSelected)="onCityMunicipalitySelected($event)"
+          formControlName="cityMunicipality"
         />
       </fieldset>
 
@@ -156,17 +158,28 @@
           [loading]="barangayFilter.loading()"
           (searchChanged)="barangayFilter.onSearch($event)"
           (scrolledToBottom)="barangayFilter.loadMore()"
+          formControlName="barangay"
         />
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Zip code</legend>
-        <input type="text" class="input w-full" placeholder="Enter zip code" />
+        <input
+          type="text"
+          class="input w-full"
+          placeholder="Enter zip code"
+          formControlName="zipCode"
+        />
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Street Address</legend>
-        <input type="text" class="input w-full" placeholder="Enter street address" />
+        <input
+          type="text"
+          class="input w-full"
+          placeholder="Enter street address"
+          formControlName="streetAddress"
+        />
       </fieldset>
     </div>
   </form>

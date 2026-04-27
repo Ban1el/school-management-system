@@ -4,3 +4,10 @@
     light --default,
     dark --prefersdark;
 }
+
+@layer utilities {
+  input:disabled {
+    cursor: default;
+    color: var(--color-base-content);
+  }
+}

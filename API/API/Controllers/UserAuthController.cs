@@ -39,7 +39,7 @@ namespace API.Controllers
             await SetRefreshTokenCookie(result.Data!.refreshtoken);
             await SetAccessTokenCookie(result.Data!.accesstoken);
 
-            var userIdentity = await _userService.GetUserIdentity(result.Data.userId);
+            var userIdentity = await _userService.GetUserIdentityAsync(result.Data.userId);
 
             return Ok(userIdentity);
         }
@@ -91,7 +91,7 @@ namespace API.Controllers
         [AuditTrail(IsIgnore = true)]
         public async Task<ActionResult<UserIdentityDto>> Verify()
         {
-            var userIdentity = await _userService.GetUserIdentity(User.GetUserId());
+            var userIdentity = await _userService.GetUserIdentityAsync(User.GetUserId());
             return Ok(userIdentity);
         }
 
