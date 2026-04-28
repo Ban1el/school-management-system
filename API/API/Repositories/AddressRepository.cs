@@ -181,4 +181,48 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
 
         return PaginationHelper.Create(items, totalCount, pageNumber, pageSize);
     }
+
+    public async Task<bool> IsRegionExistsAsync(int id)
+    {
+        return await _context.Regions
+          .AnyAsync(r => r.Id != id);
+    }
+
+    public async Task<bool> IsProvinceExistsAsync(int id)
+    {
+        return await _context.Provinces
+            .AnyAsync(p => p.Id != id);
+    }
+
+    public async Task<bool> IsCityMunicipalityExistsAsync(int id)
+    {
+        return await _context.Provinces
+           .AnyAsync(c => c.Id != id);
+    }
+
+    public async Task<bool> IsBarangayExistsAsync(int id)
+    {
+        return await _context.Provinces
+      .AnyAsync(b => b.Id != id);
+    }
+
+    public async Task<bool> IsValidAddressAsync(int regionId, int provinceId, int cityMunicipalityId, int barangayId, bool isNcr)
+    {
+        var province = await _context.Provinces
+         .AnyAsync(p => p.Id == provinceId && p.RegionId == regionId);
+
+        if (!province) return false;
+
+        var cityMunicipality = await _context.CitiesMunicipalities
+            .AnyAsync(c => c.Id == cityMunicipalityId && c.ProvinceId == provinceId);
+
+        if (!cityMunicipality) return false;
+
+        var barangay = await _context.Barangays
+            .AnyAsync(b => b.Id == barangayId && b.CityId == cityMunicipalityId);
+
+        if (!barangay) return false;
+
+        return true;
+    }
 }

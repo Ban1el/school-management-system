@@ -10,4 +10,5 @@ public interface IUserRepository
     Task<UserDto?> GetByIdAsync(int userId);
     Task<UserIdentityDto?> GetUserIdentityAsync(int userId);
     Task<UserDto?> UpdateUserProfileAsync(int userId, UserProfileUpdateDto dto);
+    Task<bool> IsEmailTakenAsync(string email, int excludeUserId);
 }

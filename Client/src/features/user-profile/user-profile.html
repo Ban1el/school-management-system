@@ -27,7 +27,7 @@
     <h1 class="text-lg font-bold">Personal Info</h1>
   </div>
 
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="updateUser()">
     <div class="grid grid-cols-3 gap-2">
       <fieldset class="fieldset">
         <legend class="fieldset-legend">First Name</legend>
@@ -106,7 +106,7 @@
       <h1 class="text-lg font-bold">Address</h1>
     </div>
 
-    <div class="grid grid-cols-3 gap-2">
+    <div class="grid grid-cols-3 gap-2 mb-5">
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Region</legend>
         <app-dropdown-paginate
@@ -182,5 +182,11 @@
         />
       </fieldset>
     </div>
+
+    @if (isEdit()) {
+      <div class="flex justify-end">
+        <button class="btn w-40 btn-primary">Save</button>
+      </div>
+    }
   </form>
 </div>

@@ -16,4 +16,9 @@ public interface IAddressRepository
     Task<PaginatedResult<DropdownDto>> GetProvincesPaginatedAsync(string? search, int pageNumber, int pageSize, int regionId);
     Task<PaginatedResult<DropdownDto>> GetCitiesMunicipalitiesPaginatedAsync(string? search, int pageNumber, int pageSize, int id, bool byRegion);
     Task<PaginatedResult<DropdownDto>> GetBarangaysPaginatedAsync(string? search, int pageNumber, int pageSize, int cityId);
+    Task<bool> IsRegionExistsAsync(int id);
+    Task<bool> IsProvinceExistsAsync(int id);
+    Task<bool> IsCityMunicipalityExistsAsync(int id);
+    Task<bool> IsBarangayExistsAsync(int id);
+    Task<bool> IsValidAddressAsync(int regionId, int provinceId, int cityMunicipalityId, int barangayId, bool isNcr);
 }

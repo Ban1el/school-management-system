@@ -71,6 +71,12 @@ public class UserRepository(AppDbContext _context) : IUserRepository
            .FirstOrDefaultAsync();
     }
 
+    public async Task<bool> IsEmailTakenAsync(string email, int excludeUserId)
+    {
+        return await _context.Users
+        .AnyAsync(u => u.Email == email && u.Id != excludeUserId);
+    }
+
     public async Task<UserDto?> UpdateUserProfileAsync(int userId, UserProfileUpdateDto dto)
     {
         var user = await _context.Users

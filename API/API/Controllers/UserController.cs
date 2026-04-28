@@ -32,8 +32,15 @@ namespace API.Controllers
         public async Task<ActionResult<UserDto?>> UpdateProfile(int id, [FromBody] UserProfileUpdateDto dto)
         {
             var result = await _userService.UpdateUserProfileAsync(id, dto);
-            HttpContext.Items[AuditTrailConstants.ReferenceId] = result?.Id;
-            return result;
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            HttpContext.Items[AuditTrailConstants.ReferenceId] = result.Data?.Id;
+
+            return Ok(result.Data);
         }
     }
 }

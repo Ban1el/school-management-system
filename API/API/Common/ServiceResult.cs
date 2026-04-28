@@ -6,6 +6,7 @@ public class ServiceResult<T>
 {
     public bool Success { get; set; }
     public string? Message { get; set; }
+    public List<string> Errors { get; set; } = [];
     public T? Data { get; set; }
 
     //Why service result over throwing an exception?
@@ -31,6 +32,8 @@ public class ServiceResult<T>
             Message = message
         };
     }
+    public static ServiceResult<T> Fail(List<string> errors) =>
+      new() { Success = false, Errors = errors };
 }
 
 public class ServiceResult

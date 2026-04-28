@@ -1,4 +1,5 @@
 using System;
+using API.Common;
 using API.Data;
 using API.DTOs.User;
 using API.DTOs.Users;
@@ -27,8 +28,30 @@ public class UserService
         return await _uow.Users.GetUserIdentityAsync(id);
     }
 
-    public async Task<UserDto?> UpdateUserProfileAsync(int id, UserProfileUpdateDto dto)
+    public async Task<ServiceResult<UserDto?>> UpdateUserProfileAsync(int id, UserProfileUpdateDto dto)
     {
+        var result = new ServiceResult<UserDto?>();
+
+        var errors = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(dto.Email))
+        {
+            if (await _uow.Users.IsEmailTakenAsync(dto.Email, id)) errors.Add("Email already taken");
+        }
+
+        bool addressSet = false;
+
+        if (dto.RegionId != null)
+        {
+            addressSet = true;
+            if (await _uow.Addresses.IsRegionExistsAsync(dto.RegionId.Value)) errors.Add("Region does not exists");
+        }
+
+        if (addressSet)
+        {
+            if (await _uow.Addresses.IsValidAddressAsync(dto.RegionId!.Value, dto.ProvinceId!.Value, dto.CityMunicipalityId!.Value, dto.BarangayId!.Value, false)) errors.Add("Region does not exists");
+        }
+
         await _uow.BeginTransactionAsync();
 
         try
@@ -36,7 +59,10 @@ public class UserService
             var user = await _uow.Users.UpdateUserProfileAsync(id, dto);
             await _uow.SaveChangesAsync();
             await _uow.CommitAsync();
-            return user;
+
+            if (user != null) result.Data = user;
+
+            return result;
         }
         catch
         {

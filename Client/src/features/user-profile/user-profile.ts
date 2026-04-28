@@ -1,9 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { AddressService } from '../../core/services/address-service';
 import { DropdownRegionFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-region-filter';
 import { DropdownItem } from '../../types/Dropdown/DropdownItemDto';
 import { DropdownPaginate } from '../../shared/dropdown-paginated/dropdown-paginate/dropdown-paginate';
-import { FormGroup, FormControl, ReactiveFormsModule, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DropdownProvinceFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-province-filter';
 import { DropdownCityMunicipalityFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-city-municipality-filter';
 import { DropdownBarangayFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-barangay-filter';
@@ -13,6 +12,7 @@ import { NgClass } from '@angular/common';
 import { UserService } from '../../core/services/user-service';
 import { UserDto } from '../../types/User/UserDto';
 import { UserAuthService } from '../../core/services/user-auth-service';
+import { UserProfileUpdateDto } from '../../types/User/UserProfileUpdateDto';
 
 @Component({
   selector: 'app-user-profile',
@@ -78,7 +78,7 @@ export class UserProfile implements OnInit {
     middleName: [''],
     lastName: [''],
     mobileNumber: [''],
-    email: [''],
+    email: ['', Validators.email],
     gender: [0],
     region: [null as DropdownItem | null],
     province: [{ value: null as DropdownItem | null, disabled: true }],
@@ -87,6 +87,34 @@ export class UserProfile implements OnInit {
     zipCode: [''],
     streetAddress: [''],
   });
+
+  updateUser() {
+    if (!this.form.valid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const { region, province, cityMunicipality, barangay, gender, ...rest } = this.form.value;
+
+    const dto: UserProfileUpdateDto = {
+      email: rest.email ?? undefined,
+      firstName: rest.firstName ?? undefined,
+      middleName: rest.middleName ?? undefined,
+      lastName: rest.lastName ?? undefined,
+      mobileNumber: rest.mobileNumber ?? undefined,
+      streetAddress: rest.streetAddress ?? undefined,
+      zipCode: rest.zipCode ?? undefined,
+      regionId: region?.id ?? undefined,
+      provinceId: province?.id ?? undefined,
+      cityMunicipalityId: cityMunicipality?.id ?? undefined,
+      barangayId: barangay?.id ?? undefined,
+    };
+
+    this.userService.updateUser(this.userId, dto).subscribe({
+      next: () => {},
+      complete: () => {},
+    });
+  }
 
   setForm() {
     const user = this.user();
