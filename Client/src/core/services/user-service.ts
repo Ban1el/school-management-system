@@ -16,6 +16,6 @@ export class UserService {
   }
 
   updateUser(id: number, dto: UserProfileUpdateDto) {
-    return this.http.put<UserDto>(this.baseUrl + 'user/' + id, dto);
+    return this.http.put<UserDto>(this.baseUrl + 'user/profile/' + id, dto);
   }
 }

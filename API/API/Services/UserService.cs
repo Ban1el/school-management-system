@@ -1,5 +1,6 @@
 using System;
 using API.Common;
+using API.Constants;
 using API.Data;
 using API.DTOs.User;
 using API.DTOs.Users;
@@ -40,17 +41,70 @@ public class UserService
         }
 
         bool addressSet = false;
+        bool addressExists = true;
+        bool isNcr = false;
 
         if (dto.RegionId != null)
         {
             addressSet = true;
-            if (await _uow.Addresses.IsRegionExistsAsync(dto.RegionId.Value)) errors.Add("Region does not exists");
+            if (!await _uow.Addresses.IsRegionExistsAsync(dto.RegionId.Value))
+            {
+                errors.Add("Region does not exists");
+                addressExists = false;
+            }
+
+            var region = await _uow.Addresses.GetRegionByIdAsync(dto.RegionId.Value);
+
+            if (region!.Name == AddressConstants.NCR) isNcr = true;
         }
 
-        if (addressSet)
+        if (dto.ProvinceId != null)
         {
-            if (await _uow.Addresses.IsValidAddressAsync(dto.RegionId!.Value, dto.ProvinceId!.Value, dto.CityMunicipalityId!.Value, dto.BarangayId!.Value, false)) errors.Add("Region does not exists");
+            addressSet = true;
+            if (!await _uow.Addresses.IsProvinceExistsAsync(dto.ProvinceId.Value))
+            {
+                errors.Add("Province does not exists");
+                addressExists = false;
+            }
         }
+
+        if (dto.CityMunicipalityId != null)
+        {
+            addressSet = true;
+            if (!await _uow.Addresses.IsCityMunicipalityExistsAsync(dto.CityMunicipalityId.Value))
+            {
+                errors.Add("City / Municipality does not exists");
+                addressExists = false;
+            }
+        }
+
+        if (dto.BarangayId != null)
+        {
+            addressSet = true;
+            if (!await _uow.Addresses.IsBarangayExistsAsync(dto.BarangayId.Value))
+            {
+                errors.Add("Barangay does not exists");
+                addressExists = false;
+            }
+
+        }
+
+        if (addressSet && addressExists)
+        {
+            bool addressComplete = true;
+            if (!dto.RegionId.HasValue) addressComplete = false;
+            if (!dto.ProvinceId.HasValue && !isNcr) addressComplete = false;
+            if (!dto.CityMunicipalityId.HasValue) addressComplete = false;
+            if (!dto.BarangayId.HasValue) addressComplete = false;
+
+            if (!addressComplete) errors.Add("Incomplete address");
+            else
+            {
+                if (await _uow.Addresses.IsValidAddressAsync(dto.RegionId!.Value, dto.ProvinceId, dto.CityMunicipalityId!.Value, dto.BarangayId!.Value, isNcr)) errors.Add("Invalid address");
+            }
+        }
+
+        if (errors.Count() > 0) return ServiceResult<UserDto?>.Fail(errors);
 
         await _uow.BeginTransactionAsync();
 

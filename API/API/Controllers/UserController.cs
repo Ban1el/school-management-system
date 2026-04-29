@@ -35,7 +35,7 @@ namespace API.Controllers
 
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.Errors);
             }
 
             HttpContext.Items[AuditTrailConstants.ReferenceId] = result.Data?.Id;

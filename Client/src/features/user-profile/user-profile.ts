@@ -8,15 +8,15 @@ import { DropdownCityMunicipalityFilter } from '../../shared/dropdown-paginated/
 import { DropdownBarangayFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-barangay-filter';
 import { GenderService } from '../../core/services/gender-service';
 import { GenderDto } from '../../types/Gender/GenderDto';
-import { NgClass } from '@angular/common';
 import { UserService } from '../../core/services/user-service';
 import { UserDto } from '../../types/User/UserDto';
 import { UserAuthService } from '../../core/services/user-auth-service';
 import { UserProfileUpdateDto } from '../../types/User/UserProfileUpdateDto';
+import { ToastService } from '../../core/services/toast-service';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [DropdownPaginate, ReactiveFormsModule, NgClass],
+  imports: [DropdownPaginate, ReactiveFormsModule],
   providers: [
     DropdownRegionFilter,
     DropdownProvinceFilter,
@@ -27,6 +27,7 @@ import { UserProfileUpdateDto } from '../../types/User/UserProfileUpdateDto';
   styleUrl: './user-profile.css',
 })
 export class UserProfile implements OnInit {
+  toastService = inject(ToastService);
   userAuthService = inject(UserAuthService);
   userService = inject(UserService);
   regionFilter = inject(DropdownRegionFilter);
@@ -112,6 +113,10 @@ export class UserProfile implements OnInit {
 
     this.userService.updateUser(this.userId, dto).subscribe({
       next: () => {},
+      error: (err) => {
+        const errors = err.error as string[];
+        this.toastService.error(errors.join('\n'));
+      },
       complete: () => {},
     });
   }

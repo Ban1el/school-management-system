@@ -206,17 +206,28 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
       .AnyAsync(b => b.Id != id);
     }
 
-    public async Task<bool> IsValidAddressAsync(int regionId, int provinceId, int cityMunicipalityId, int barangayId, bool isNcr)
+    public async Task<bool> IsValidAddressAsync(int regionId, int? provinceId, int cityMunicipalityId, int barangayId, bool isNcr)
     {
-        var province = await _context.Provinces
-         .AnyAsync(p => p.Id == provinceId && p.RegionId == regionId);
 
-        if (!province) return false;
+        if (!isNcr)
+        {
+            var province = await _context.Provinces
+                  .AnyAsync(p => p.Id == provinceId!.Value && p.RegionId == regionId);
 
-        var cityMunicipality = await _context.CitiesMunicipalities
-            .AnyAsync(c => c.Id == cityMunicipalityId && c.ProvinceId == provinceId);
+            if (!province) return false;
 
-        if (!cityMunicipality) return false;
+            var cityMunicipality = await _context.CitiesMunicipalities
+                .AnyAsync(c => c.Id == cityMunicipalityId && c.RegionId == regionId);
+
+            if (!cityMunicipality) return false;
+        }
+        else
+        {
+            var cityMunicipality = await _context.CitiesMunicipalities
+                .AnyAsync(c => c.Id == cityMunicipalityId && c.ProvinceId == provinceId);
+
+            if (!cityMunicipality) return false;
+        }
 
         var barangay = await _context.Barangays
             .AnyAsync(b => b.Id == barangayId && b.CityId == cityMunicipalityId);
@@ -224,5 +235,22 @@ public class AddressRepository(AppDbContext _context) : IAddressRepository
         if (!barangay) return false;
 
         return true;
+    }
+
+    public async Task<RegionDto?> GetRegionByIdAsync(int regionId)
+    {
+        return await _context.Regions
+        .Where(r => r.Id == regionId)
+        .Select(r => new RegionDto
+        {
+            Id = r.Id,
+            Name = r.Name,
+            DateCreated = r.DateCreated,
+            CreatedBy = r.CreatedBy,
+            DateModified = r.DateModified,
+            ModifiedBy = r.ModifiedBy,
+            IsActive = r.IsActive
+        })
+        .FirstOrDefaultAsync();
     }
 }

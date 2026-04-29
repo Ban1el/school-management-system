@@ -32,18 +32,24 @@ public class ServiceResult<T>
             Message = message
         };
     }
+
+
     public static ServiceResult<T> Fail(List<string> errors) =>
-      new() { Success = false, Errors = errors };
+        new() { Success = false, Errors = errors };
 }
 
 public class ServiceResult
 {
     public bool Success { get; set; }
     public string? Message { get; set; }
+    public List<string> Errors { get; set; } = [];
 
     public static ServiceResult Ok() =>
         new() { Success = true };
 
     public static ServiceResult Fail(string message) =>
         new() { Success = false, Message = message };
+
+    public static ServiceResult Fail(List<string> errors) =>
+        new() { Success = false, Errors = errors };
 }

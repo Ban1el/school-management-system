@@ -9,6 +9,7 @@ namespace API.Repositories.Interfaces;
 public interface IAddressRepository
 {
     Task<List<RegionDto>> GetRegionsAsync();
+    Task<RegionDto?> GetRegionByIdAsync(int regionId);
     Task<List<ProvinceDto>> GetProvincesAsync(int id);
     Task<List<CityMunicipalityDto>> GetCitiesMunicipalitiesAsync(int id, bool byRegion = false);
     Task<List<BarangayDto>> GetBarangaysAsync(int id);
@@ -20,5 +21,5 @@ public interface IAddressRepository
     Task<bool> IsProvinceExistsAsync(int id);
     Task<bool> IsCityMunicipalityExistsAsync(int id);
     Task<bool> IsBarangayExistsAsync(int id);
-    Task<bool> IsValidAddressAsync(int regionId, int provinceId, int cityMunicipalityId, int barangayId, bool isNcr);
+    Task<bool> IsValidAddressAsync(int regionId, int? provinceId, int cityMunicipalityId, int barangayId, bool isNcr);
 }
