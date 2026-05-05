@@ -13,10 +13,11 @@ import { UserDto } from '../../types/User/UserDto';
 import { UserAuthService } from '../../core/services/user-auth-service';
 import { UserProfileUpdateDto } from '../../types/User/UserProfileUpdateDto';
 import { ToastService } from '../../core/services/toast-service';
+import { TextInput } from '../../shared/forms/text-input/text-input';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [DropdownPaginate, ReactiveFormsModule],
+  imports: [DropdownPaginate, ReactiveFormsModule, TextInput],
   providers: [
     DropdownRegionFilter,
     DropdownProvinceFilter,
@@ -87,6 +88,7 @@ export class UserProfile implements OnInit {
     barangay: [{ value: null as DropdownItem | null, disabled: true }],
     zipCode: [''],
     streetAddress: [''],
+    sample: [''],
   });
 
   updateUser() {

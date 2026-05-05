@@ -31,11 +31,11 @@
     <div class="grid grid-cols-3 gap-2">
       <fieldset class="fieldset">
         <legend class="fieldset-legend">First Name</legend>
-        <input
-          type="text"
-          class="input w-full"
-          placeholder="Enter first name"
+        <app-text-input
+          label="Enter first name"
           formControlName="firstName"
+          type="text"
+          [hideLabel]="true"
         />
       </fieldset>
 
