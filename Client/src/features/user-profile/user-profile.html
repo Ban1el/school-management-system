@@ -41,21 +41,22 @@
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Middle Name</legend>
-        <input
-          type="text"
-          class="input w-full"
-          placeholder="Enter last name"
+
+        <app-text-input
+          label="Enter last name"
           formControlName="middleName"
+          type="text"
+          [hideLabel]="true"
         />
       </fieldset>
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Last Name</legend>
-        <input
-          type="text"
-          class="input w-full"
-          placeholder="Enter last name"
+        <app-text-input
+          label="Enter last name"
           formControlName="lastName"
+          type="text"
+          [hideLabel]="true"
         />
       </fieldset>
     </div>
@@ -80,11 +81,11 @@
 
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Email Address</legend>
-        <input
-          type="text"
-          class="input w-full"
-          placeholder="Enter email address"
+        <app-text-input
+          label="Enter email address"
           formControlName="email"
+          type="text"
+          [hideLabel]="true"
         />
       </fieldset>
 

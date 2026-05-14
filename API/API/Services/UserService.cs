@@ -100,7 +100,7 @@ public class UserService
             if (!addressComplete) errors.Add("Incomplete address");
             else
             {
-                if (await _uow.Addresses.IsValidAddressAsync(dto.RegionId!.Value, dto.ProvinceId, dto.CityMunicipalityId!.Value, dto.BarangayId!.Value, isNcr)) errors.Add("Invalid address");
+                if (!await _uow.Addresses.IsValidAddressAsync(dto.RegionId!.Value, dto.ProvinceId, dto.CityMunicipalityId!.Value, dto.BarangayId!.Value, isNcr)) errors.Add("Invalid address");
             }
         }
 
@@ -114,7 +114,16 @@ public class UserService
             await _uow.SaveChangesAsync();
             await _uow.CommitAsync();
 
-            if (user != null) result.Data = user;
+            if (user != null)
+            {
+                result.Success = true;
+                result.Data = user;
+            }
+            else
+            {
+                result.Success = false;
+                result.Message = "Internal Server Error";
+            }
 
             return result;
         }

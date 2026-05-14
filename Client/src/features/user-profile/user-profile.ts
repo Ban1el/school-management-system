@@ -14,6 +14,7 @@ import { UserAuthService } from '../../core/services/user-auth-service';
 import { UserProfileUpdateDto } from '../../types/User/UserProfileUpdateDto';
 import { ToastService } from '../../core/services/toast-service';
 import { TextInput } from '../../shared/forms/text-input/text-input';
+import { NCR_NAME } from '../../core/constants/AddressConstants';
 
 @Component({
   selector: 'app-user-profile',
@@ -55,13 +56,12 @@ export class UserProfile implements OnInit {
     this.userService.getUser(this.userId).subscribe({
       next: (result) => {
         this.user.set(result);
-        console.log(this.user());
+        this.setForm();
       },
     });
 
     this.regionFilter.init();
     this.form.disable();
-    this.setForm();
   }
 
   toggleEdit() {
@@ -125,7 +125,12 @@ export class UserProfile implements OnInit {
 
   setForm() {
     const user = this.user();
+
     if (user) {
+      if (user.regionName == NCR_NAME) {
+        this.provinceHidden.set(true);
+      }
+
       this.form.patchValue({
         firstName: user.firstName ?? '',
         middleName: user.middleName ?? '',

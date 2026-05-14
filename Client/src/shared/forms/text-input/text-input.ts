@@ -15,13 +15,22 @@ export class TextInput implements ControlValueAccessor {
   labelClass = input<string>('');
   hideLabel = input<boolean>(false);
 
+  private onChange = (value: any) => {};
+  private onTouched = () => {};
+
   constructor(@Self() public ngControl: NgControl) {
     this.ngControl.valueAccessor = this;
   }
 
   writeValue(obj: any): void {}
-  registerOnChange(fn: any): void {}
-  registerOnTouched(fn: any): void {}
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
 
   get control(): FormControl {
     return this.ngControl.control as FormControl;
