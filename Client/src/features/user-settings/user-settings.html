@@ -1,0 +1,24 @@
+<div class="m-25">
+  <div class="card bg-base-100 shadow-sm">
+    <div class="card-body flex items-center flex-row justify-between">
+      <div class="flex items-center gap-5">
+        <span class="material-symbols-outlined text-6xl!">password</span>
+        <div>
+          <p class="font-bold text-lg">Password</p>
+
+          <form [formGroup]="form" (ngSubmit)="updatePassword()">
+            <app-text-input
+              label="Enter first name"
+              formControlName="password"
+              type="text"
+              [hideLabel]="true"
+            />
+          </form>
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary">Change Password</button>
+      </div>
+    </div>
+  </div>
+</div>
