@@ -1,5 +1,6 @@
 using System;
 using API.Data;
+using API.Models.Data;
 using API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -9,6 +10,7 @@ namespace API.Repositories;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly AppDbContext _context;
+    private readonly AppDbContextDapper _contextDapper;
     private IDbContextTransaction? _transaction;
     public IUserRepository Users { get; }
     public IUserTokenRepository UserTokens { get; }
@@ -17,10 +19,10 @@ public class UnitOfWork : IUnitOfWork
     public IAddressRepository Addresses { get; }
     public IGenderRepository Genders { get; }
 
-    public UnitOfWork(AppDbContext context)
+    public UnitOfWork(AppDbContext context, AppDbContextDapper contextDapper)
     {
         _context = context;
-        Users = new UserRepository(context);
+        Users = new UserRepository(context, contextDapper);
         UserTokens = new UserTokenRepository(context);
         ErrorLogs = new ErrorLogRepository(context);
         AuditTrails = new AuditTrailRepository(context);

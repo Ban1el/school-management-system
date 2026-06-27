@@ -4,11 +4,15 @@ using API.Data;
 using API.DTOs.Users;
 using API.Repositories.Interfaces;
 using API.DTOs.User;
+using API.Models.Data;
+using Dapper;
+using System.Data;
 
 namespace API.Repositories;
 
-public class UserRepository(AppDbContext _context) : IUserRepository
+public class UserRepository(AppDbContext _context, AppDbContextDapper _contextDapper) : IUserRepository
 {
+    #region READ
     public async Task<UserDto?> GetByIdAsync(int userId)
     {
         return await _context.Users
@@ -44,20 +48,32 @@ public class UserRepository(AppDbContext _context) : IUserRepository
             .FirstOrDefaultAsync();
     }
 
+    //OLD - EF
+    // public async Task<UserDto?> GetByUsernameAsync(string username)
+    // {
+    //     return await _context.Users
+    //          .Where(u => u.Username == username)
+    //          .Select(u => new UserDto
+    //          {
+    //              Id = u.Id,
+    //              Email = u.Email,
+    //              RoleId = u.RoleId,
+    //              IsActive = u.IsActive,
+    //              Password = u.Password,
+    //              PasswordSalt = u.PasswordSalt
+    //          })
+    //          .FirstOrDefaultAsync();
+    // }
+
     public async Task<UserDto?> GetByUsernameAsync(string username)
     {
-        return await _context.Users
-             .Where(u => u.Username == username)
-             .Select(u => new UserDto
-             {
-                 Id = u.Id,
-                 Email = u.Email,
-                 RoleId = u.RoleId,
-                 IsActive = u.IsActive,
-                 Password = u.Password,
-                 PasswordSalt = u.PasswordSalt
-             })
-             .FirstOrDefaultAsync();
+        using var conn = _contextDapper.CreateConnection();
+
+        return await conn.QueryFirstOrDefaultAsync<UserDto>(
+            "sp_GetUserByUsername",
+            new { Username = username },
+            commandType: CommandType.StoredProcedure
+        );
     }
 
     public async Task<UserIdentityDto?> GetUserIdentityAsync(int userId)
@@ -76,7 +92,9 @@ public class UserRepository(AppDbContext _context) : IUserRepository
         return await _context.Users
         .AnyAsync(u => u.Email == email && u.Id != excludeUserId);
     }
+    #endregion
 
+    #region WRITE
     public async Task<UserDto?> UpdateUserProfileAsync(int userId, UserProfileUpdateDto dto)
     {
         var user = await _context.Users
@@ -125,4 +143,5 @@ public class UserRepository(AppDbContext _context) : IUserRepository
             IsActive = user.IsActive,
         };
     }
+    #endregion
 }

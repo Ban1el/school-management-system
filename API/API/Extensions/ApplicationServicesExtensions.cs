@@ -4,6 +4,7 @@ using API.Extensions;
 using API.Services;
 using API.Repositories.Interfaces;
 using API.Repositories;
+using API.Models.Data;
 
 public static class ApplicationServicesExtensions
 {
@@ -21,6 +22,7 @@ public static class ApplicationServicesExtensions
                options.UseSqlServer(config.GetConnectionString("SMSDatabase")));
         string base64Key = config["Encryption:Key"]
              ?? throw new InvalidOperationException("Encryption key not found in configuration.");
+        services.AddSingleton<AppDbContextDapper>();
         CryptoExtensions.SetKey(base64Key);
         services.AddIdentityServices(config);
         services.AddScoped<IUnitOfWork, UnitOfWork>();
