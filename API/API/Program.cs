@@ -16,7 +16,13 @@ builder.Host.UseSerilog((context, services, logger) =>
             {
                 TableName = "Logs",
                 AutoCreateSqlTable = true
-            });
+            })
+        .WriteTo.File(
+        "Logs/log-.txt",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 90,
+        fileSizeLimitBytes: 10_000_000,
+        rollOnFileSizeLimit: true);
 });
 
 builder.Services.AddApplicationServices(builder.Configuration);
