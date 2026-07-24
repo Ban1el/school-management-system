@@ -19,7 +19,6 @@ namespace API.Controllers
         }
 
         [HttpGet("all/active")]
-        [AuditTrail(IsIgnore = true)]
         public async Task<ActionResult<List<GenderDto>>> GetGendersActive()
         {
             return await _genderService.GetGendersActiveAsync();

@@ -21,7 +21,6 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        [AuditTrail(IsIgnore = true)]
         public async Task<ActionResult<UserDto?>> GetById(int id)
         {
             return await _userService.GetUserByIdAsync(id);

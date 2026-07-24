@@ -1,10 +1,8 @@
-using System.Security.Claims;
+using API.Attributes;
 using API.Constants;
 using API.DTOs.AudiTrail;
-using API.Models;
-using API.Services;
 using API.Extensions;
-using API.Attributes;
+using API.Services;
 using System.Text.Json;
 
 namespace API.Middleware;
@@ -27,7 +25,9 @@ public class AuditTrailMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (_excludedPaths.Any(p => context.Request.Path.StartsWithSegments(p)))
+        if (
+            _excludedPaths.Any(p => context.Request.Path.StartsWithSegments(p)) ||
+            HttpMethods.IsGet(context.Request.Method))
         {
             await _next(context);
             return;

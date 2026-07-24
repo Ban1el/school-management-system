@@ -13,7 +13,6 @@ public static class ApplicationServicesExtensions
         services.AddControllers();
         services.AddScoped<UserAuthService>();
         services.AddScoped<TokenService>();
-        services.AddScoped<ErrorLogService>();
         services.AddScoped<AuditTrailService>();
         services.AddScoped<AddressService>();
         services.AddScoped<GenderService>();

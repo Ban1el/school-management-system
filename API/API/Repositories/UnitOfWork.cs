@@ -14,7 +14,6 @@ public class UnitOfWork : IUnitOfWork
     private IDbContextTransaction? _transaction;
     public IUserRepository Users { get; }
     public IUserTokenRepository UserTokens { get; }
-    public IErrorLogRepository ErrorLogs { get; }
     public IAuditTrailRepository AuditTrails { get; }
     public IAddressRepository Addresses { get; }
     public IGenderRepository Genders { get; }
@@ -24,7 +23,6 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         Users = new UserRepository(context, contextDapper);
         UserTokens = new UserTokenRepository(context);
-        ErrorLogs = new ErrorLogRepository(context);
         AuditTrails = new AuditTrailRepository(context);
         Addresses = new AddressRepository(context);
         Genders = new GenderRepository(context);

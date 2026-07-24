@@ -12,7 +12,6 @@ namespace API.Data
             public DbSet<UserToken> UserTokens { get; set; }
             public DbSet<Role> Roles { get; set; }
             public DbSet<AuditTrail> AuditTrails { get; set; }
-            public DbSet<ErrorLog> ErrorLogs { get; set; }
             public DbSet<Region> Regions { get; set; }
             public DbSet<Province> Provinces { get; set; }
             public DbSet<CityMunicipality> CitiesMunicipalities { get; set; }

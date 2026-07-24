@@ -88,7 +88,6 @@ namespace API.Controllers
 
         [HttpGet("verify")]
         [Authorize]
-        [AuditTrail(IsIgnore = true)]
         public async Task<ActionResult<UserIdentityDto>> Verify()
         {
             var userIdentity = await _userService.GetUserIdentityAsync(User.GetUserId());
