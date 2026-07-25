@@ -1,4 +1,5 @@
 using API.Data.Seed;
+using API.Extensions;
 using API.Middleware;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
@@ -26,6 +27,7 @@ builder.Host.UseSerilog((context, services, logger) =>
 });
 
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddOptionsConfiguration(builder.Configuration);
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();

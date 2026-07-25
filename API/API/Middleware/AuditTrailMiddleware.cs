@@ -2,135 +2,206 @@ using API.Attributes;
 using API.Constants;
 using API.DTOs.AudiTrail;
 using API.Extensions;
+using API.Options;
 using API.Services;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 namespace API.Middleware;
 
 public class AuditTrailMiddleware
 {
-    private readonly RequestDelegate _next;
-    private readonly string[] _excludedPaths = ["/swagger", "/health", "/favicon.ico"];
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly HashSet<string> _sensitiveFields;
+    private const string Unknown = "Unknown";
+    private const string RedactedValue = "***";
 
-    public AuditTrailMiddleware(RequestDelegate next, IConfiguration configuration, IServiceScopeFactory scopeFactory)
+    private readonly RequestDelegate _next;
+    private readonly HashSet<string> _sensitiveFields;
+    private readonly HashSet<string> _excludedPaths;
+
+    public AuditTrailMiddleware(
+        RequestDelegate next,
+        IOptions<AuditTrailOptions> options)
     {
         _next = next;
-        _scopeFactory = scopeFactory;
+
+        var auditOptions = options.Value;
+
         _sensitiveFields = new HashSet<string>(
-        configuration.GetSection("ErrorLogging:SensitiveFields").Get<string[]>() ?? [],
-        StringComparer.OrdinalIgnoreCase);
+            auditOptions.RedactFields ?? [],
+            StringComparer.OrdinalIgnoreCase);
+
+        _excludedPaths = new HashSet<string>(
+            auditOptions.ExcludedPaths ?? [],
+            StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(
+        HttpContext context,
+        AuditTrailService auditService)
     {
-        if (
-            _excludedPaths.Any(p => context.Request.Path.StartsWithSegments(p)) ||
-            HttpMethods.IsGet(context.Request.Method))
+        if (ShouldSkipAudit(context))
         {
             await _next(context);
             return;
         }
 
-        using var scope = _scopeFactory.CreateScope();
-        var auditService = scope.ServiceProvider.GetRequiredService<AuditTrailService>();
+        var requestBody = await ReadRequestBodyAsync(context);
+        var parsedRequest = ParseBody(requestBody);
 
-        context.Request.EnableBuffering();
-        var requestBody = await new StreamReader(context.Request.Body).ReadToEndAsync();
-        context.Request.Body.Position = 0;
-
-        int? userId = null;
-        try { userId = context.User?.GetUserId(); } catch { }
-
-        object? parsedRequest = parseBody(requestBody);
-
-        // ======== CALL CONTROLLER ========
         var originalResponseBody = context.Response.Body;
+
         using var memoryStream = new MemoryStream();
         context.Response.Body = memoryStream;
 
-        await _next(context); // controller executes here
+        try
+        {
+            await _next(context);
+        }
+        finally
+        {
+            context.Response.Body = originalResponseBody;
+        }
 
-        // read attribute AFTER _next
+        var responseBody = await ReadResponseBodyAsync(
+            memoryStream,
+            originalResponseBody);
+
         var endpoint = context.GetEndpoint();
-        var auditAttr = endpoint?.Metadata.GetMetadata<AuditTrailAttribute>();
-        var module = auditAttr?.Module ?? "Unknown";
-        var action = auditAttr?.Action ?? "Unknown";
-        var isIgnore = auditAttr?.IsIgnore ?? false;
+        var auditAttribute = endpoint?.Metadata.GetMetadata<AuditTrailAttribute>();
 
+        if (auditAttribute?.IsIgnore == true)
+            return;
 
-        // Reset to start
+        var module = auditAttribute?.Module ?? Unknown;
+        var action = auditAttribute?.Action ?? Unknown;
+
+        var userId = GetUserId(context);
+
+        var parsedResponse = ParseBody(responseBody);
+
+        var refId = context.Items[AuditTrailConstants.ReferenceId]?.ToString() ?? string.Empty;
+
+        await auditService.CreateAsync(CreateAuditDto(
+            userId,
+            module,
+            action,
+            context,
+            parsedRequest,
+            true));
+
+        await auditService.CreateAsync(CreateAuditDto(
+            userId,
+            module,
+            action,
+            context,
+            parsedResponse,
+            false,
+            refId));
+    }
+
+    private bool ShouldSkipAudit(HttpContext context)
+    {
+        return _excludedPaths.Any(path =>
+            context.Request.Path.StartsWithSegments(path))
+            || HttpMethods.IsGet(context.Request.Method);
+    }
+
+    private static async Task<string> ReadRequestBodyAsync(HttpContext context)
+    {
+        context.Request.EnableBuffering();
+
+        using var reader = new StreamReader(
+            context.Request.Body,
+            leaveOpen: true);
+
+        var body = await reader.ReadToEndAsync();
+
+        context.Request.Body.Position = 0;
+
+        return body;
+    }
+
+    private static async Task<string> ReadResponseBodyAsync(
+        MemoryStream memoryStream,
+        Stream originalResponseBody)
+    {
         memoryStream.Position = 0;
-        // Read response as string for logging
-        var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
-        // Reset position again so it can be copied to original response
+
+        using var reader = new StreamReader(
+            memoryStream,
+            leaveOpen: true);
+
+        var responseBody = await reader.ReadToEndAsync();
+
         memoryStream.Position = 0;
         await memoryStream.CopyToAsync(originalResponseBody);
-        context.Response.Body = originalResponseBody;
 
-        if (!isIgnore)
+        return responseBody;
+    }
+
+    private static int GetUserId(HttpContext context)
+    {
+        try
         {
-            object? parsedResponse = parseBody(responseBody);
-
-            // ======== REQUEST LOG ========
-            await auditService.CreateAsync(new AuditTrailCreateDto
-            {
-                UserId = userId ?? 0,
-                Module = module,
-                Action = action,
-                Path = context.Request.Path,
-                Method = context.Request.Method,
-                Data = parsedRequest != null ? JsonSerializer.Serialize(parsedRequest) : string.Empty,
-                ClientIpAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-                IsRequest = true,
-                DateCreated = DateTime.UtcNow
-            });
-
-            var refId = context.Items[AuditTrailConstants.ReferenceId]?.ToString();
-
-            // ======== RESPONSE LOG ========
-            await auditService.CreateAsync(new AuditTrailCreateDto
-            {
-                UserId = userId ?? 0,
-                Module = module,
-                Action = action,
-                Path = context.Request.Path,
-                Method = context.Request.Method,
-                Data = parsedResponse != null ? JsonSerializer.Serialize(parsedResponse) : string.Empty,
-                ClientIpAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-                IsRequest = false,
-                DateCreated = DateTime.UtcNow,
-                RefId = refId?.ToString() ?? ""
-            });
+            return context.User?.GetUserId() ?? 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 
-    public object? parseBody(string requestBody)
+    private AuditTrailCreateDto CreateAuditDto(
+        int userId,
+        string module,
+        string action,
+        HttpContext context,
+        object? data,
+        bool isRequest,
+        string refId = "")
     {
-        object? parsedBody = null;
-        if (!string.IsNullOrEmpty(requestBody))
+        return new AuditTrailCreateDto
         {
-            try
+            UserId = userId,
+            Module = module,
+            Action = action,
+            Path = context.Request.Path,
+            Method = context.Request.Method,
+            Data = data != null
+                ? JsonSerializer.Serialize(data)
+                : string.Empty,
+            ClientIpAddress = context.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+            IsRequest = isRequest,
+            DateCreated = DateTime.UtcNow,
+            RefId = refId
+        };
+    }
+
+    private object? ParseBody(string body)
+    {
+        if (string.IsNullOrWhiteSpace(body))
+            return null;
+
+        try
+        {
+            var json = JsonSerializer.Deserialize<Dictionary<string, object>>(body);
+
+            if (json == null)
+                return body;
+
+            foreach (var key in json.Keys.ToList())
             {
-                var rawJson = JsonSerializer.Deserialize<Dictionary<string, object>>(requestBody);
-                if (rawJson != null)
+                if (_sensitiveFields.Contains(key))
                 {
-                    foreach (var key in rawJson.Keys.ToList())
-                    {
-                        if (_sensitiveFields.Contains(key))
-                            rawJson[key] = "***REDACTED***";
-                    }
-                    parsedBody = rawJson;
+                    json[key] = RedactedValue;
                 }
             }
-            catch
-            {
-                parsedBody = requestBody;
-            }
-        }
 
-        return parsedBody;
+            return json;
+        }
+        catch
+        {
+            return body;
+        }
     }
 }
-
