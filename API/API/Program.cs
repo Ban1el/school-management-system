@@ -3,6 +3,7 @@ using API.Extensions;
 using API.Middleware;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,12 @@ builder.Host.UseSerilog((context, services, logger) =>
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddOptionsConfiguration(builder.Configuration);
 
+builder.Services.AddOpenApi();
+
+//Idempotency
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<IdempotencyFilter>();
+
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseSerilogRequestLogging();
@@ -44,6 +51,13 @@ app.UseCors(x => x.AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
     .WithOrigins("https://localhost:4200"));
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
+
 
 app.UseHttpsRedirection();
 

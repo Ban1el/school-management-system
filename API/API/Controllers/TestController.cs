@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    [Route("api/buggy")]
+    [Route("api/test")]
     [ApiController]
-    public class BuggyController : ControllerBase
+    public class TestController : ControllerBase
     {
         [HttpGet("test-log")]
         public async Task<IActionResult> TestLog()
@@ -25,12 +25,20 @@ namespace API.Controllers
         {
             throw new Exception("Test error message");
         }
-
+ 
         [HttpPut("test-log-post/{id}")]
         [AuditTrail(Module = ModuleConstants.Buggy, Action = ActionConstants.Update)]
         public async Task<IActionResult> TestLog(int id, [FromBody] BuggyUpdateDto dto)
         {
             throw new Exception("Test error message");
+        }
+
+        [ServiceFilter(typeof(IdempotencyFilter))]
+        [HttpPost("test-idempotency")]
+        public async Task<IActionResult> TestIdempotency()
+        {
+            Console.WriteLine($"Action executed at {DateTime.Now:HH:mm:ss.fff}");
+            return Ok(new { timestamp = DateTime.Now });
         }
     }
 }
