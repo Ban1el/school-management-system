@@ -1,2 +1,45 @@
-<p>user-management works!</p>
-<button type="submit" class="btn btn-md btn-primary rounded-xl" (click)="logout()">Logout</button>
+<div class="flex justify-end">
+  <button class="btn btn-info text-white" routerLink="/user/management/add">
+    <span class="material-symbols-outlined"> add </span> Add User
+  </button>
+</div>
+
+<div class="m-25">
+  <!-- app.html -->
+  <table>
+    <thead>
+      @for (headerGroup of table.getHeaderGroups(); track headerGroup.id) {
+        <tr>
+          @for (header of headerGroup.headers; track header.id) {
+            <th>
+              @if (!header.isPlaceholder) {
+                <div
+                  [style.cursor]="header.column.getCanSort() ? 'pointer' : null"
+                  (click)="header.column.getToggleSortingHandler()?.($event)"
+                >
+                  <ng-container *flexRenderHeader="header; let headerCell">
+                    {{ headerCell }}
+                  </ng-container>
+                  {{ sortIndicator(header.column.getIsSorted()) }}
+                </div>
+              }
+            </th>
+          }
+        </tr>
+      }
+    </thead>
+    <tbody>
+      @for (row of table.getRowModel().rows; track row.id) {
+        <tr>
+          @for (cell of row.getAllCells(); track cell.id) {
+            <td>
+              <ng-container *flexRenderCell="cell; let renderCell">
+                {{ renderCell }}
+              </ng-container>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

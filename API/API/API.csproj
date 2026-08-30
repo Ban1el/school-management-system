@@ -22,9 +22,6 @@
     <Folder Include="Logs\" />
     <Folder Include="Logs\Errors\" />
     <Folder Include="Middleware\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Repositories\Interfaces\" />
-    <Folder Include="Services\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 

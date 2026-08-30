@@ -17,6 +17,7 @@ public class UnitOfWork : IUnitOfWork
     public IAuditTrailRepository AuditTrails { get; }
     public IAddressRepository Addresses { get; }
     public IGenderRepository Genders { get; }
+    public IRoleRepository Roles { get; }
 
     public UnitOfWork(AppDbContext context, AppDbContextDapper contextDapper)
     {
@@ -26,6 +27,7 @@ public class UnitOfWork : IUnitOfWork
         AuditTrails = new AuditTrailRepository(context);
         Addresses = new AddressRepository(context);
         Genders = new GenderRepository(context);
+        Roles = new RoleRepository(context);
     }
 
     public async Task<int> SaveChangesAsync() =>

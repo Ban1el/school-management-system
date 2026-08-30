@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { AddressService } from '../../../core/services/address-service';
-import { DropdownItem } from '../../../types/Dropdown/DropdownItemDto';
+import { AddressService } from '../../core/services/address-service';
+import { DropdownItem } from '../../types/Dropdown/DropdownItemDto';
 
 @Injectable()
 export class DropdownBaseFilter {

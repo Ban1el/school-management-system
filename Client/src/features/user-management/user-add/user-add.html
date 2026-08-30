@@ -1,0 +1,24 @@
+<form [formGroup]="form" (ngSubmit)="addUser()">
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">First Name</legend>
+    <app-text-input
+      label="Enter first name"
+      formControlName="firstName"
+      type="text"
+      [hideLabel]="true"
+    />
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Role</legend>
+    <app-dropdown-paginate
+      label="Select Role"
+      legendLabel="Role Name"
+      [items]="roleFilter.items()"
+      [loading]="roleFilter.loading()"
+      (searchChanged)="roleFilter.onSearch($event)"
+      (scrolledToBottom)="roleFilter.loadMore()"
+      formControlName="role"
+    />
+  </fieldset>
+</form>

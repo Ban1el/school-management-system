@@ -7,6 +7,7 @@ import { authGuard } from '../core/guards/auth-guard';
 import { isLoggedInGuard } from '../core/guards/is-logged-in-guard';
 import { UserProfile } from '../features/user-profile/user-profile';
 import { UserSettings } from '../features/user-settings/user-settings';
+import { UserAdd } from '../features/user-management/user-add/user-add';
 
 export const routes: Routes = [
   { path: '', component: Login, canActivate: [isLoggedInGuard] },
@@ -17,7 +18,11 @@ export const routes: Routes = [
     component: Nav,
     children: [
       { path: 'home', component: Home },
-      { path: 'user/management', component: UserManagement },
+      {
+        path: 'user/management',
+        component: UserManagement,
+      },
+      { path: 'user/management/add', component: UserAdd },
       { path: 'user/profile', component: UserProfile },
       { path: 'user/settings', component: UserSettings },
     ],
