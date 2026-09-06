@@ -1,24 +1,61 @@
 <form [formGroup]="form" (ngSubmit)="addUser()">
-  <fieldset class="fieldset">
-    <legend class="fieldset-legend">First Name</legend>
-    <app-text-input
-      label="Enter first name"
-      formControlName="firstName"
-      type="text"
-      [hideLabel]="true"
-    />
-  </fieldset>
+  <div class="grid grid-cols-3 gap-2 mb-5">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Username</legend>
+      <app-text-input
+        label="Enter username"
+        formControlName="userName"
+        type="text"
+        [hideLabel]="true"
+      />
+    </fieldset>
 
-  <fieldset class="fieldset">
-    <legend class="fieldset-legend">Role</legend>
-    <app-dropdown-paginate
-      label="Select Role"
-      legendLabel="Role Name"
-      [items]="roleFilter.items()"
-      [loading]="roleFilter.loading()"
-      (searchChanged)="roleFilter.onSearch($event)"
-      (scrolledToBottom)="roleFilter.loadMore()"
-      formControlName="role"
-    />
-  </fieldset>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">First Name</legend>
+      <app-text-input
+        label="Enter first name"
+        formControlName="firstName"
+        type="text"
+        [hideLabel]="true"
+      />
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Last Name</legend>
+      <app-text-input
+        label="Enter last name"
+        formControlName="lastName"
+        type="text"
+        [hideLabel]="true"
+      />
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Middle Name</legend>
+      <app-text-input
+        label="Enter middle name"
+        formControlName="middleName"
+        type="text"
+        [hideLabel]="true"
+      />
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Email</legend>
+      <app-text-input label="Enter email" formControlName="email" type="email" [hideLabel]="true" />
+    </fieldset>
+
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Role</legend>
+      <app-dropdown-paginate
+        label="Select Role"
+        legendLabel="Role Name"
+        [items]="roleFilter.items()"
+        [loading]="roleFilter.loading()"
+        (searchChanged)="roleFilter.onSearch($event)"
+        (scrolledToBottom)="roleFilter.loadMore()"
+        formControlName="role"
+      />
+    </fieldset>
+  </div>
 </form>

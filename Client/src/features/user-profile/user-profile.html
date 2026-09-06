@@ -113,24 +113,24 @@
         <app-dropdown-paginate
           label="Select Region"
           legendLabel="Region Name"
-          [items]="regionFilter.items()"
-          [loading]="regionFilter.loading()"
-          (searchChanged)="regionFilter.onSearch($event)"
-          (scrolledToBottom)="regionFilter.loadMore()"
+          [items]="addressCascade.regionFilter.items()"
+          [loading]="addressCascade.regionFilter.loading()"
+          (searchChanged)="addressCascade.regionFilter.onSearch($event)"
+          (scrolledToBottom)="addressCascade.regionFilter.loadMore()"
           (itemSelected)="onRegionSelected($event)"
           formControlName="region"
         />
       </fieldset>
 
-      <fieldset class="fieldset" [class.hidden]="provinceHidden()">
+      <fieldset class="fieldset" [class.hidden]="addressCascade.provinceHidden()">
         <legend class="fieldset-legend">Province</legend>
         <app-dropdown-paginate
           label="Select Province"
           legendLabel="Region Name"
-          [items]="provinceFilter.items()"
-          [loading]="provinceFilter.loading()"
-          (searchChanged)="provinceFilter.onSearch($event)"
-          (scrolledToBottom)="provinceFilter.loadMore()"
+          [items]="addressCascade.provinceFilter.items()"
+          [loading]="addressCascade.provinceFilter.loading()"
+          (searchChanged)="addressCascade.provinceFilter.onSearch($event)"
+          (scrolledToBottom)="addressCascade.provinceFilter.loadMore()"
           (itemSelected)="onProvinceSelected($event)"
           formControlName="province"
         />
@@ -140,10 +140,10 @@
         <app-dropdown-paginate
           label="Select City Municipality"
           legendLabel="City / Municipality Name"
-          [items]="cityMunicipalityFilter.items()"
-          [loading]="cityMunicipalityFilter.loading()"
-          (searchChanged)="cityMunicipalityFilter.onSearch($event)"
-          (scrolledToBottom)="cityMunicipalityFilter.loadMore()"
+          [items]="addressCascade.cityMunicipalityFilter.items()"
+          [loading]="addressCascade.cityMunicipalityFilter.loading()"
+          (searchChanged)="addressCascade.cityMunicipalityFilter.onSearch($event)"
+          (scrolledToBottom)="addressCascade.cityMunicipalityFilter.loadMore()"
           (itemSelected)="onCityMunicipalitySelected($event)"
           formControlName="cityMunicipality"
         />
@@ -152,13 +152,12 @@
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Barangay</legend>
         <app-dropdown-paginate
-          formControlName="barangay"
           label="Select Barangay"
           legendLabel="Barangay Name"
-          [items]="barangayFilter.items()"
-          [loading]="barangayFilter.loading()"
-          (searchChanged)="barangayFilter.onSearch($event)"
-          (scrolledToBottom)="barangayFilter.loadMore()"
+          [items]="addressCascade.barangayFilter.items()"
+          [loading]="addressCascade.barangayFilter.loading()"
+          (searchChanged)="addressCascade.barangayFilter.onSearch($event)"
+          (scrolledToBottom)="addressCascade.barangayFilter.loadMore()"
           formControlName="barangay"
         />
       </fieldset>

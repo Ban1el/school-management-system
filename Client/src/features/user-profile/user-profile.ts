@@ -1,11 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { DropdownRegionFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-region-filter';
 import { DropdownItem } from '../../types/Dropdown/DropdownItemDto';
 import { DropdownPaginate } from '../../shared/dropdown-paginated/dropdown-paginate/dropdown-paginate';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { DropdownProvinceFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-province-filter';
-import { DropdownCityMunicipalityFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-city-municipality-filter';
-import { DropdownBarangayFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-barangay-filter';
 import { GenderService } from '../../core/services/gender-service';
 import { GenderDto } from '../../types/Gender/GenderDto';
 import { UserService } from '../../core/services/user-service';
@@ -15,16 +11,20 @@ import { UserProfileUpdateDto } from '../../types/User/UserProfileUpdateDto';
 import { ToastService } from '../../core/services/toast-service';
 import { TextInput } from '../../shared/forms/text-input/text-input';
 import { NCR_NAME } from '../../core/constants/AddressConstants';
+import {
+  AddressCascadeService,
+  AddressFormGroup,
+} from '../../core/services/address-cascade-service';
+import { DropdownBarangayFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-barangay-filter';
+import { DropdownCityMunicipalityFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-city-municipality-filter';
+import { DropdownProvinceFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-province-filter';
+import { DropdownRegionFilter } from '../../shared/dropdown-paginated/dropdown-address-pagination/dropdown-region-filter';
+import { AddressCascadeProviders } from '../../shared/dropdown-paginated/dropdown-address-pagination/address-cascade-providers';
 
 @Component({
   selector: 'app-user-profile',
   imports: [DropdownPaginate, ReactiveFormsModule, TextInput],
-  providers: [
-    DropdownRegionFilter,
-    DropdownProvinceFilter,
-    DropdownCityMunicipalityFilter,
-    DropdownBarangayFilter,
-  ],
+  providers: [AddressCascadeProviders(), AddressCascadeService],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css',
 })
@@ -32,17 +32,13 @@ export class UserProfile implements OnInit {
   toastService = inject(ToastService);
   userAuthService = inject(UserAuthService);
   userService = inject(UserService);
-  regionFilter = inject(DropdownRegionFilter);
-  provinceFilter = inject(DropdownProvinceFilter);
-  cityMunicipalityFilter = inject(DropdownCityMunicipalityFilter);
-  barangayFilter = inject(DropdownBarangayFilter);
   genderService = inject(GenderService);
+  addressCascade = inject(AddressCascadeService);
 
   protected isEdit = signal(false);
   protected genders = signal<GenderDto[]>([]);
   protected user = signal<UserDto | null>(null);
   protected userId = this.userAuthService.user()?.id ?? 0;
-  provinceHidden = signal(false);
 
   private fb = inject(FormBuilder);
 
@@ -60,7 +56,7 @@ export class UserProfile implements OnInit {
       },
     });
 
-    this.regionFilter.init();
+    this.addressCascade.attach(this.form as AddressFormGroup);
     this.form.disable();
   }
 
@@ -88,7 +84,6 @@ export class UserProfile implements OnInit {
     barangay: [{ value: null as DropdownItem | null, disabled: true }],
     zipCode: [''],
     streetAddress: [''],
-    sample: [''],
   });
 
   updateUser() {
@@ -128,7 +123,7 @@ export class UserProfile implements OnInit {
 
     if (user) {
       if (user.regionName == NCR_NAME) {
-        this.provinceHidden.set(true);
+        this.addressCascade.provinceHidden.set(true);
       }
 
       this.form.patchValue({
@@ -150,56 +145,12 @@ export class UserProfile implements OnInit {
   }
 
   onRegionSelected(item: DropdownItem | null) {
-    if (item && item.id !== 0) {
-      if (item.id == 4) {
-        //Enter here when NCR is selected
-        this.cityMunicipalityFilter.setId(item.id);
-        this.cityMunicipalityFilter.init();
-
-        this.provinceHidden.set(true);
-        this.form.get('cityMunicipality')?.enable();
-        this.form.get('barangay')?.disable();
-      } else {
-        this.provinceHidden.set(false);
-        this.provinceFilter.setRegionId(item.id);
-        this.provinceFilter.init();
-        this.form.get('province')?.enable();
-        this.form.get('cityMunicipality')?.disable();
-        this.form.get('barangay')?.disable();
-      }
-    } else {
-      this.provinceHidden.set(false);
-      this.form.get('province')?.disable();
-      this.form.get('cityMunicipality')?.disable();
-      this.form.get('barangay')?.disable();
-    }
-
-    this.form.patchValue({ province: null, cityMunicipality: null, barangay: null });
+    this.addressCascade.onRegionSelected(item);
   }
-
   onProvinceSelected(item: DropdownItem | null) {
-    if (item && item.id !== 0) {
-      this.cityMunicipalityFilter.setId(item.id);
-      this.cityMunicipalityFilter.init();
-
-      this.form.get('cityMunicipality')?.enable();
-      this.form.get('barangay')?.disable();
-    } else {
-      this.form.get('cityMunicipality')?.disable();
-      this.form.get('barangay')?.disable();
-    }
-
-    this.form.patchValue({ cityMunicipality: null, barangay: null });
+    this.addressCascade.onProvinceSelected(item);
   }
-
   onCityMunicipalitySelected(item: DropdownItem | null) {
-    if (item && item.id !== 0) {
-      this.barangayFilter.setCityMunicipalityId(item.id);
-      this.barangayFilter.init();
-      this.form.get('barangay')?.enable();
-    } else {
-      this.form.get('barangay')?.disable();
-    }
-    this.form.patchValue({ barangay: null });
+    this.addressCascade.onCityMunicipalitySelected(item);
   }
 }
